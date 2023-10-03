@@ -16,17 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
-import static com.project.SWP391.entities.ERole.*;
-import static com.project.SWP391.entities.Permission.ADMIN_CREATE;
-import static com.project.SWP391.entities.Permission.ADMIN_DELETE;
-import static com.project.SWP391.entities.Permission.ADMIN_READ;
-import static com.project.SWP391.entities.Permission.ADMIN_UPDATE;
-import static com.project.SWP391.entities.Permission.STORE_CREATE;
-import static com.project.SWP391.entities.Permission.STORE_DELETE;
-import static com.project.SWP391.entities.Permission.STORE_READ;
-import static com.project.SWP391.entities.Permission.STORE_UPDATE;
 
-
+import static com.project.SWP391.entities.Permission.*;
+import static com.project.SWP391.entities.Role.*;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -58,12 +50,14 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers("/api/v1/management/**").hasAnyRole(ROLE_ADMIN.name(), ROLE_STORE.name())
-                                .requestMatchers("/api/v1/delivery/**").hasAnyRole(ROLE_STAFF.name())
+                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), STORE.name())
                                 .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), STORE_READ.name())
                                 .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), STORE_CREATE.name())
                                 .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), STORE_UPDATE.name())
                                 .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), STORE_DELETE.name())
+                                .requestMatchers("/api/v1/delivery/**").hasAnyRole(STAFF.name())
+                                .requestMatchers(GET, "/api/v1/delivery/**").hasAnyAuthority(STAFF_READ.name())
+                                .requestMatchers(PUT, "/api/v1/delivery/**").hasAnyAuthority(STAFF_UPDATE.name())
                                 .anyRequest()
                                 .authenticated()
                 )

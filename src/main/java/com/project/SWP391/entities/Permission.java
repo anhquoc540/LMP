@@ -13,9 +13,10 @@ public enum Permission {
     STORE_READ("management:read"),
     STORE_UPDATE("management:update"),
     STORE_CREATE("management:create"),
-    STORE_DELETE("management:delete")
+    STORE_DELETE("management:delete"),
 
-    ;
+    STAFF_READ("delivery:read"),
+    STAFF_UPDATE("delivery:update");
 
     @Getter
     private final String permission;

@@ -2,24 +2,63 @@ package com.project.SWP391.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import static com.project.SWP391.entities.Permission.*;
+
+
+@RequiredArgsConstructor
+public enum Role {
+
+    USER(Collections.emptySet()),
+    ADMIN(
+            Set.of(
+                    ADMIN_READ,
+                    ADMIN_UPDATE,
+                    ADMIN_DELETE,
+                    ADMIN_CREATE,
+                    STORE_READ,
+                    STORE_UPDATE,
+                    STORE_DELETE,
+                    STORE_CREATE
+            )
+    ),
+   STORE(
+            Set.of(
+                    STORE_READ,
+                    STORE_UPDATE,
+                    STORE_DELETE,
+                    STORE_CREATE
+            )
+    ),
+    STAFF(
+            Set.of(
+                    STAFF_READ,
+                    STAFF_UPDATE
+
+            )
+    )
+
+    ;
 
     @Getter
-    @Setter
+    private final Set<Permission> permissions;
 
-    @Entity
-    @Table(name = "roles")
-    public class Role implements Serializable {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "id", nullable = false)
-        private Long id;
-
-        @Enumerated(EnumType.STRING)
-        @Column(length = 20)
-        private ERole name;
+    public List<SimpleGrantedAuthority> getAuthorities() {
+        var authorities = getPermissions()
+                .stream()
+                .map(permission -> new SimpleGrantedAuthority(permission.getPermission()))
+                .collect(Collectors.toList());
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+        return authorities;
     }
+}
 

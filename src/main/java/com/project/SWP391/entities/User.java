@@ -1,22 +1,29 @@
 package com.project.SWP391.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@Data
+@Builder
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"username"}),
         @UniqueConstraint(columnNames = {"email"}),
         @UniqueConstraint(columnNames = {"phone"})
 })
-public class User implements Serializable {
+public class User implements UserDetails {
 
     @Id
     @Column(name = "id", nullable = false)
@@ -41,10 +48,16 @@ public class User implements Serializable {
     @Column(name = "status")
     private int status;
 
-
-    @OneToOne
-    @JoinColumn(name = "role_id")
+    @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return role.getAuthorities();
+    }
 
     @OneToMany(mappedBy = "user")
     private Set<Order> orders;
@@ -56,6 +69,27 @@ public class User implements Serializable {
     private Set<Shipment> shipments;
 
 
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
 }
 
 

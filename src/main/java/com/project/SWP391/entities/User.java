@@ -18,20 +18,13 @@ import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"username"}),
-        @UniqueConstraint(columnNames = {"email"}),
-        @UniqueConstraint(columnNames = {"phone"})
-})
+@Table(name = "users")
 public class User implements UserDetails {
 
     @Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "username", nullable = false)
-    private String username;
     @Column(name = "password", nullable = false)
     private String password;
     @Column(name = "email", nullable = false)
@@ -59,6 +52,11 @@ public class User implements UserDetails {
         return role.getAuthorities();
     }
 
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
     @OneToMany(mappedBy = "user")
     private Set<Order> orders;
 
@@ -73,22 +71,22 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }
 

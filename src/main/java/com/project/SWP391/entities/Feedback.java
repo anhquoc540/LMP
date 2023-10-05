@@ -24,4 +24,11 @@ public class Feedback implements Serializable {
     @ManyToOne
     @JoinColumn (name = "service_id", nullable = false)
     private Service service;
+
+    @Column(name = "star")
+    private int star;
+
+    @Column(name = "contents")
+    private String content;
+
 }

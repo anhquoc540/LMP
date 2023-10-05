@@ -57,17 +57,16 @@ public class User implements UserDetails {
         return email;
     }
 
+
     @OneToMany(mappedBy = "user")
     private Set<Order> orders;
 
+    @Getter
     @OneToMany(mappedBy = "user")
     private Set<Feedback> feedbacks;
 
     @OneToMany(mappedBy = "user")
     private Set<Shipment> shipments;
-
-
-
 
     @Override
     public boolean isAccountNonExpired() {

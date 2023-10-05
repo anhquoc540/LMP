@@ -1,11 +1,14 @@
 package com.project.SWP391.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.SWP391.entities.User;
+import com.project.SWP391.entities.Feedback;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -18,5 +21,6 @@ public class AuthenticationResponse {
     @JsonProperty("refresh_token")
     private String refreshToken;
     private UserInfoDTO userInfoDTO;
+    private List<FeedbackDTO> feedbacks;
 
 }

@@ -1,10 +1,13 @@
 package com.project.SWP391.requests;
 
+import com.project.SWP391.entities.Feedback;
 import com.project.SWP391.entities.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Data
 @Builder
@@ -17,4 +20,5 @@ public class RegisterRequest {
     private String email;
     private String password;
     private Role role;
+
 }

@@ -1,14 +1,17 @@
 package com.project.SWP391.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.SWP391.entities.Feedback;
 import com.project.SWP391.entities.User;
 import com.project.SWP391.entities.Token;
 import com.project.SWP391.entities.TokenType;
+import com.project.SWP391.repositories.FeedbackRepository;
 import com.project.SWP391.repositories.TokenRepository;
 import com.project.SWP391.repositories.UserRepository;
 import com.project.SWP391.requests.AuthenticationRequest;
 import com.project.SWP391.requests.RegisterRequest;
 import com.project.SWP391.responses.AuthenticationResponse;
+import com.project.SWP391.responses.FeedbackDTO;
 import com.project.SWP391.responses.UserInfoDTO;
 import com.project.SWP391.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,15 +27,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository repository;
+    private final FeedbackRepository feedbackRepository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+
     @Autowired
     private final ModelMapper mapper;
 
@@ -56,6 +64,8 @@ public class AuthenticationService {
                     .accessToken(jwtToken)
                     .refreshToken(refreshToken)
                     .build();
+
+
         }
 
       throw new Exception("Email is existed");
@@ -70,14 +80,18 @@ public class AuthenticationService {
         );
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
+        var feedbacks = feedbackRepository.findAllByUserId(user.getId());
         var jwtToken = jwtService.generateToken((UserDetails) user);
         var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
+
+
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .userInfoDTO(mapper.map(user, UserInfoDTO.class))
+                .feedbacks(feedbacks.stream().map(feedback -> mapToDTO(feedback)).collect(Collectors.toList()))
                 .build();
 
 
@@ -131,5 +145,8 @@ public class AuthenticationService {
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
+    }
+    private FeedbackDTO mapToDTO(Feedback feedback) {
+        return mapper.map(feedback, FeedbackDTO.class);
     }
 }

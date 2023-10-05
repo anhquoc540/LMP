@@ -36,11 +36,12 @@ public class Store {
 
     @OneToMany(mappedBy = "store")
     private Set<Order> orders;
+
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "store")
     private Set<Service> services;
 
 }

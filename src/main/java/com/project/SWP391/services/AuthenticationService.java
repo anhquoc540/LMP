@@ -9,10 +9,13 @@ import com.project.SWP391.repositories.UserRepository;
 import com.project.SWP391.requests.AuthenticationRequest;
 import com.project.SWP391.requests.RegisterRequest;
 import com.project.SWP391.responses.AuthenticationResponse;
+import com.project.SWP391.responses.UserInfoDTO;
 import com.project.SWP391.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +33,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    @Autowired
+    private final ModelMapper mapper;
 
     public AuthenticationResponse register(RegisterRequest request) throws Exception {
 
@@ -47,6 +52,7 @@ public class AuthenticationService {
             var refreshToken = jwtService.generateRefreshToken(newUser);
             saveUserToken(savedUser, jwtToken);
             return AuthenticationResponse.builder()
+                    .userInfoDTO(mapper.map(savedUser, UserInfoDTO.class))
                     .accessToken(jwtToken)
                     .refreshToken(refreshToken)
                     .build();
@@ -71,7 +77,10 @@ public class AuthenticationService {
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
+                .userInfoDTO(mapper.map(user, UserInfoDTO.class))
                 .build();
+
+
     }
 
     private void saveUserToken(User user, String jwtToken) {

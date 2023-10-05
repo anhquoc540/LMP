@@ -30,8 +30,9 @@ public class Service implements Serializable {
     @Column(name = "isDeleted")
     private int isDeleted;
 
-    @ManyToMany
-    private Set<Store> stores;
+    @ManyToOne
+    @JoinColumn (name = "store_id")
+    private Store store;
 
     @ManyToOne
     @JoinColumn (name = "type_id")

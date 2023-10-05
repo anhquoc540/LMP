@@ -20,9 +20,6 @@ public class Time implements Serializable {
     @Column(name = "price")
     private float price;
 
-    @OneToMany(mappedBy = "time")
-    private Set<Service> services ;
-
     @ManyToOne
     @JoinColumn (name = "store_id")
     private Store store;

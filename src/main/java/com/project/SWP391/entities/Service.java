@@ -46,10 +46,6 @@ public class Service implements Serializable {
     @JoinColumn (name = "material_id")
     private Material material;
 
-    @ManyToOne
-    @JoinColumn (name = "time_id")
-    private Time time;
-
     @OneToMany (mappedBy = "service")
     private Set<PriceBasedWeight> prices_weight ;
 

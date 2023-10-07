@@ -2,6 +2,7 @@ package com.project.SWP391.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Nationalized;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -30,9 +31,11 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false)
     private String email;
     @Column(name = "fullname", nullable = false)
+    @Nationalized
     private String fullName;
 
     @Column(name = "address")
+    @Nationalized
     private String address;
     @Column(name = "phone")
     private String phone;

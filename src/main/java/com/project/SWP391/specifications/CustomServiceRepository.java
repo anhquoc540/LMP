@@ -1,7 +1,8 @@
 package com.project.SWP391.specifications;
 
-import com.project.SWP391.entities.Service;
-import com.project.SWP391.repositories.ServiceRepository;
+import com.project.SWP391.entities.SpecialLaundry;
+
+import com.project.SWP391.repositories.SpecialServiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
@@ -13,8 +14,8 @@ import static org.springframework.data.jpa.domain.Specification.where;
 @RequiredArgsConstructor
 public class CustomServiceRepository {
 
-    private final ServiceRepository repository;
-    public List<Service> getQueryResult(List<Filter> filters){
+    private final SpecialServiceRepository repository;
+    public List<SpecialLaundry> getQueryResult(List<Filter> filters){
         if(!filters.isEmpty()) {
             return repository.findAll(getSpecificationFromFilters(filters));
         }else {
@@ -22,15 +23,15 @@ public class CustomServiceRepository {
         }
     }
 
-    private Specification<Service> getSpecificationFromFilters(List<Filter> filter) {
-        Specification<Service> specification = where(createSpecification(filter.remove(0)));
+    private Specification<SpecialLaundry> getSpecificationFromFilters(List<Filter> filter) {
+        Specification<SpecialLaundry> specification = where(createSpecification(filter.remove(0)));
         for (Filter input : filter) {
             specification = specification.and(createSpecification(input));
         }
         return specification;
     }
 
-    private Specification<Service> createSpecification(Filter input) {
+    private Specification<SpecialLaundry> createSpecification(Filter input) {
         switch (input.getOperator()){
             case EQUALS:
                 return (root, query, criteriaBuilder) ->

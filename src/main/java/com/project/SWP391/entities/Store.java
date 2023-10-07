@@ -3,6 +3,7 @@ package com.project.SWP391.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
 import java.util.Set;
 
@@ -18,12 +19,14 @@ public class Store {
     private Long id;
 
     @Column(name = "store_name")
+    @Nationalized
     private String name;
 
     @Column(name = "phone")
     private String phone;
 
     @Column(name = "address")
+    @Nationalized
     private String address;
 
     @Column(name="status")
@@ -42,6 +45,6 @@ public class Store {
     private User user;
 
     @OneToMany(mappedBy = "store")
-    private Set<Service> services;
+    private Set<SpecialLaundry> laundries;
 
 }

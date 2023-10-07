@@ -1,25 +1,34 @@
 package com.project.SWP391.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
 import java.util.Set;
 
 @Getter
 @Setter
-
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "services")
-public class Service implements Serializable {
+@Table(name = "special_services")
+public class SpecialLaundry implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "name")
+    @Nationalized
+    private String name;
     @Column(name = "description")
+    @Nationalized
     private String description;
+
+    @Column(name = "image")
+    private String imageBanner;
 
     @Column(name = "unit")
     private String unit;
@@ -34,23 +43,23 @@ public class Service implements Serializable {
     @JoinColumn (name = "store_id")
     private Store store;
 
-    @ManyToOne
-    @JoinColumn (name = "type_id")
-    private Type type;
 
     @ManyToOne
-    @JoinColumn (name = "clothe_id")
-    private Clothe clothe;
+    @JoinColumn (name = "cloth_id")
+    private Cloth cloth;
 
-    @ManyToOne
-    @JoinColumn (name = "material_id")
-    private Material material;
+    @ManyToMany
+    Set<Material> materials;
 
-    @OneToMany (mappedBy = "service")
-    private Set<PriceBasedWeight> prices_weight ;
 
-    @OneToMany (mappedBy = "service")
+
+    @OneToMany (mappedBy = "specialLaundry")
     private Set<Feedback> feedbacks ;
+
+    @OneToMany (mappedBy = "specialLaundry")
+    private Set<Item> items ;
+
+
 
 
 }

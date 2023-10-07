@@ -23,6 +23,5 @@ public class Material implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "material")
-    private Set<Service> services ;
+
 }

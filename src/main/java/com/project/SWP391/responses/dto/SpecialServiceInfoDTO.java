@@ -24,7 +24,7 @@ public class SpecialServiceInfoDTO {
     private String unit;
 
     private Set<MaterialDTO> materials;
-    private ClothDTO clothe;
+    private ClothDTO cloth;
 
     private List<FeedbackDTO> feedbacks;
 

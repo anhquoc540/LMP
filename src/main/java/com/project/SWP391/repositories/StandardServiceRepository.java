@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface StandardServiceRepository extends JpaRepository<StandardLaundry, Long> {
-    List<StandardLaundry> findAllByStoreId(Long id);
+    StandardLaundry findByStoreId(Long id);
 }

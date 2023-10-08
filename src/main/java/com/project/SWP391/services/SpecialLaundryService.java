@@ -1,23 +1,29 @@
 package com.project.SWP391.services;
 
+import com.project.SWP391.entities.User;
 import com.project.SWP391.repositories.ClotheRepository;
 import com.project.SWP391.repositories.MaterialRepository;
 import com.project.SWP391.repositories.SpecialServiceRepository;
 import com.project.SWP391.repositories.StoreRepository;
 import com.project.SWP391.requests.SpecialServiceRequest;
 import com.project.SWP391.responses.dto.SpecialServiceInfoDTO;
+import com.project.SWP391.security.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.project.SWP391.entities.SpecialLaundry;
 
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
+
 public class SpecialLaundryService{
 
     private  final SpecialServiceRepository serviceRepository;
@@ -29,24 +35,55 @@ public class SpecialLaundryService{
     @Autowired
     private final ModelMapper mapper;
 
-    public List<SpecialServiceInfoDTO> getAllSpecialService(){
 
-        List<SpecialLaundry> laundries = serviceRepository.findAll();
-        return  laundries.stream().map(service -> mapToDTO(service)).collect(Collectors.toList());
+
+
+
+
+
+
+    public List<SpecialServiceInfoDTO> getAllSpecialServiceForStore(){
+        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
+        List<SpecialLaundry> laundries = serviceRepository.findAllByStoreId(store.getId());
+        Predicate<SpecialLaundry> byDeleted = specialLaundry -> specialLaundry.getIsDeleted() == 0;
+        return  laundries.stream().filter(byDeleted).map(service -> mapToDTO(service)).collect(Collectors.toList());
+
+    }
+    public SpecialServiceInfoDTO getSpecialServiceForStore(Long id){
+        var laundry = serviceRepository.findById(id).orElseThrow();
+        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
+        if((laundry.getStore()).getId() != store.getId()){
+            throw new RuntimeException("You don't have permission to access this action");
+        }
+        return mapToDTO(laundry);
 
     }
 
-    public List<SpecialServiceInfoDTO> getAllSpecialServiceByStoreId(Long storeId){
+    public List<SpecialServiceInfoDTO> getAllSpecialServiceByStoreForCustomer(Long id){
+        List<SpecialLaundry> laundries = serviceRepository.findAllByStoreId(id);
+        Predicate<SpecialLaundry> byDeleted = specialLaundry -> specialLaundry.getIsDeleted() == 0;
+        return  laundries.stream().filter(byDeleted).map(service -> mapToDTO(service)).collect(Collectors.toList());
 
-        List<SpecialLaundry> laundries = serviceRepository.findAllByStoreId(storeId);
-        return  laundries.stream().map(service -> mapToDTO(service)).collect(Collectors.toList());
+    }
+
+    public List<SpecialServiceInfoDTO> getAllSpecialServiceForCustomer(){
+
+        List<SpecialLaundry> laundries = serviceRepository.findAll();
+        Predicate<SpecialLaundry> byDeleted = specialLaundry -> specialLaundry.getIsDeleted() == 0;
+        return  laundries.stream().filter(byDeleted).map(service -> mapToDTO(service)).collect(Collectors.toList());
+
+    }
+
+    public SpecialServiceInfoDTO getSpecialServiceCustomer(Long id){
+        var laundry = serviceRepository.findById(id).orElseThrow();
+        return mapToDTO(laundry);
 
     }
 
     public SpecialServiceInfoDTO CreateSpecialServiceByStoreId(SpecialServiceRequest request){
 
 
-        var store = storeRepository.findById(request.getStoreId()).orElseThrow();
+        var store = storeRepository.findById(SecurityUtils.getPrincipal().getId()).orElseThrow();
         var cloth = clotheRepository.findById(request.getClothId()).orElseThrow();
         var material = materialRepository.findAllById(request.getMaterials()).stream().collect(Collectors.toSet());
         var laundry = SpecialLaundry.builder().name(request.getName())
@@ -57,6 +94,7 @@ public class SpecialLaundryService{
                 .unit(request.getUnit())
                 .price(request.getPrice())
                 .imageBanner(request.getImage())
+                .isDeleted(0)
                 .build();
 
         var newService = serviceRepository.save(laundry);
@@ -74,11 +112,14 @@ public class SpecialLaundryService{
         var cloth = clotheRepository.findById(request.getClothId()).orElseThrow();
         var material = materialRepository.findAllById(request.getMaterials()).stream().collect(Collectors.toSet());
 
+        if(editSpecialService.getIsDeleted() == 1){
+           throw new RuntimeException("Service is not found");
+        }
+
         editSpecialService.setName(request.getName());
         editSpecialService.setDescription(request.getDescription());
         editSpecialService.setUnit(request.getUnit());
         editSpecialService.setMaterials(material);
-        editSpecialService.setIsDeleted(request.getIsDeleted());
         editSpecialService.setPrice(request.getPrice());
         editSpecialService.setImageBanner(request.getImage());
         editSpecialService.setCloth(cloth);
@@ -87,6 +128,18 @@ public class SpecialLaundryService{
         return  mapToDTO(newService);
 
     }
+
+    public SpecialServiceInfoDTO deleteSpecialService(long id) {
+        var editSpecialService = serviceRepository.findById(id).orElseThrow();
+
+        editSpecialService.setIsDeleted(1);
+
+        var newService = serviceRepository.save(editSpecialService);
+        return  mapToDTO(newService);
+
+    }
+
+
 }
 
 

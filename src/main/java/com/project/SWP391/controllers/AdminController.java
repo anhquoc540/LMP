@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
 
-    private final SpecialLaundryService service;
+
 
     @GetMapping("/user/all")
     @PreAuthorize("hasAuthority('admin:read')")

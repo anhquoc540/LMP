@@ -1,4 +1,4 @@
-package com.project.SWP391.responses;
+package com.project.SWP391.payload;
 
 import com.project.SWP391.entities.Feedback;
 import lombok.AllArgsConstructor;

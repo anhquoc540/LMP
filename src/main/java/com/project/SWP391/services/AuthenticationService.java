@@ -11,8 +11,8 @@ import com.project.SWP391.repositories.UserRepository;
 import com.project.SWP391.requests.AuthenticationRequest;
 import com.project.SWP391.requests.RegisterRequest;
 import com.project.SWP391.responses.AuthenticationResponse;
-import com.project.SWP391.responses.FeedbackDTO;
-import com.project.SWP391.responses.UserInfoDTO;
+import com.project.SWP391.payload.FeedbackDTO;
+import com.project.SWP391.payload.UserInfoDTO;
 import com.project.SWP391.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,8 +27,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service

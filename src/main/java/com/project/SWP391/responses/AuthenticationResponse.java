@@ -1,14 +1,14 @@
 package com.project.SWP391.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.project.SWP391.entities.Feedback;
+import com.project.SWP391.payload.FeedbackDTO;
+import com.project.SWP391.payload.UserInfoDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder

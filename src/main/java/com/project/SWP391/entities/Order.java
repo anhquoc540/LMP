@@ -45,6 +45,10 @@ public class Order implements Serializable {
     @ManyToOne
     @JoinColumn (name = "store_id", nullable = false)
     private Store store;
+
+    @ManyToOne
+    @JoinColumn (name = "time_id", nullable = false)
+    private Time time;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
     private Set<Item> items;
 

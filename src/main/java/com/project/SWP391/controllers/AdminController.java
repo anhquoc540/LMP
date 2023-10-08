@@ -1,16 +1,9 @@
 package com.project.SWP391.controllers;
 
-import com.project.SWP391.requests.SpecialServiceRequest;
-import com.project.SWP391.responses.SpecialServiceInfoDTO;
-import com.project.SWP391.services.SpecialLaundryService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -18,7 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminController {
 
-    private final SpecialLaundryService service;
+
 
     @GetMapping("/user/all")
     @PreAuthorize("hasAuthority('admin:read')")
@@ -32,17 +25,7 @@ public class AdminController {
         return "GET:: admin controller";
     }
 
-    @GetMapping("/service/{id}")
-    @PreAuthorize("hasAuthority('admin:read')")
-    public ResponseEntity<List<SpecialServiceInfoDTO>> getAllServices(@PathVariable(name = "id") long id) {
-        return ResponseEntity.ok(service.getAllSpecialServiceByStoreId(id));
-    }
 
-    @PostMapping("/service/create")
-    @PreAuthorize("hasAuthority('admin:create')")
-    public ResponseEntity<SpecialServiceInfoDTO> createSpecialService(@RequestBody SpecialServiceRequest request) {
-        return ResponseEntity.ok(service.CreateSpecialServiceByStoreId(request));
-    }
 
     @GetMapping("/type/all")
     @PreAuthorize("hasAuthority('admin:read')")

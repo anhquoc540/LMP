@@ -43,7 +43,6 @@ public class Store {
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
-
     @OneToMany(mappedBy = "store")
     private Set<SpecialLaundry> laundries;
 

@@ -1,4 +1,4 @@
-package com.project.SWP391.responses;
+package com.project.SWP391.responses.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,13 +1,11 @@
 package com.project.SWP391.services;
 
-import com.project.SWP391.entities.Material;
-import com.project.SWP391.entities.Store;
 import com.project.SWP391.repositories.ClotheRepository;
 import com.project.SWP391.repositories.MaterialRepository;
 import com.project.SWP391.repositories.SpecialServiceRepository;
 import com.project.SWP391.repositories.StoreRepository;
 import com.project.SWP391.requests.SpecialServiceRequest;
-import com.project.SWP391.responses.SpecialServiceInfoDTO;
+import com.project.SWP391.responses.dto.SpecialServiceInfoDTO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +13,6 @@ import org.springframework.stereotype.Service;
 import com.project.SWP391.entities.SpecialLaundry;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 

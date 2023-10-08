@@ -23,6 +23,7 @@ public class SpecialLaundry implements Serializable {
     @Column(name = "name")
     @Nationalized
     private String name;
+
     @Column(name = "description")
     @Nationalized
     private String description;

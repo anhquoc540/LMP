@@ -1,10 +1,7 @@
 package com.project.SWP391.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -12,10 +9,12 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class SpecialServiceRequest {
 
 
-    private String storeId;
+
     private String name;
     private String description;
 
@@ -27,7 +26,9 @@ public class SpecialServiceRequest {
 
     private List<Long> materials;
 
-    private String clotheId;
+    private Long clothId;
+    private Long storeId;
+    private int isDeleted;
 
 
 }

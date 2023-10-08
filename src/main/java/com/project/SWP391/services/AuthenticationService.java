@@ -1,7 +1,7 @@
 package com.project.SWP391.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.SWP391.entities.Feedback;
+
 import com.project.SWP391.entities.User;
 import com.project.SWP391.entities.Token;
 import com.project.SWP391.entities.TokenType;
@@ -11,8 +11,8 @@ import com.project.SWP391.repositories.UserRepository;
 import com.project.SWP391.requests.AuthenticationRequest;
 import com.project.SWP391.requests.RegisterRequest;
 import com.project.SWP391.responses.AuthenticationResponse;
-import com.project.SWP391.payload.FeedbackDTO;
-import com.project.SWP391.payload.UserInfoDTO;
+
+import com.project.SWP391.responses.dto.UserInfoDTO;
 import com.project.SWP391.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -89,7 +89,6 @@ public class AuthenticationService {
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .userInfoDTO(mapper.map(user, UserInfoDTO.class))
-                .feedbacks(feedbacks.stream().map(feedback -> mapToDTO(feedback)).collect(Collectors.toList()))
                 .build();
 
 
@@ -150,7 +149,5 @@ public class AuthenticationService {
             }
         }
     }
-    private FeedbackDTO mapToDTO(Feedback feedback) {
-        return mapper.map(feedback, FeedbackDTO.class);
-    }
+
 }

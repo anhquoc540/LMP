@@ -4,6 +4,7 @@ import com.project.SWP391.entities.SpecialLaundry;
 
 import com.project.SWP391.repositories.SpecialServiceRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -23,12 +24,12 @@ public class CustomServiceRepository {
         }
     }
 
-    private Specification<SpecialLaundry> getSpecificationFromFilters(List<Filter> filter) {
+    private Sort getSpecificationFromFilters(List<Filter> filter) {
         Specification<SpecialLaundry> specification = where(createSpecification(filter.remove(0)));
         for (Filter input : filter) {
             specification = specification.and(createSpecification(input));
         }
-        return specification;
+        return (Sort) specification;
     }
 
     private Specification<SpecialLaundry> createSpecification(Filter input) {

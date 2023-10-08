@@ -26,6 +26,10 @@ public class Time implements Serializable {
     @ManyToOne
     @JoinColumn (name = "category_id")
     private TimeCategory timeCategory;
+    @OneToMany(mappedBy = "time")
+    private Set<Order> orders;
+
 
 
 }
+

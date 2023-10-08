@@ -23,7 +23,7 @@ import java.io.IOException;
 public class AuthenticationController {
 
     private final AuthenticationService service;
-    private final LogoutService logoutService;
+
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(

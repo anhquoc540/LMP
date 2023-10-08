@@ -1,4 +1,4 @@
-package com.project.SWP391.payload;
+package com.project.SWP391.responses.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +24,7 @@ public class SpecialServiceInfoDTO {
     private String unit;
 
     private Set<MaterialDTO> materials;
-    private ClothDTO clothe;
+    private ClotheDTO clothe;
 
     private List<FeedbackDTO> feedbacks;
 

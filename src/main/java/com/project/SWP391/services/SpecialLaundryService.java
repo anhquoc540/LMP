@@ -5,7 +5,7 @@ import com.project.SWP391.repositories.MaterialRepository;
 import com.project.SWP391.repositories.SpecialServiceRepository;
 import com.project.SWP391.repositories.StoreRepository;
 import com.project.SWP391.requests.SpecialServiceRequest;
-import com.project.SWP391.payload.SpecialServiceInfoDTO;
+import com.project.SWP391.responses.dto.SpecialServiceInfoDTO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +44,10 @@ public class SpecialLaundryService{
     }
 
     public SpecialServiceInfoDTO CreateSpecialServiceByStoreId(SpecialServiceRequest request){
-        Long id = Long.valueOf(request.getStoreId());
-        Long clothId = Long.valueOf(request.getClotheId());
-        var store = storeRepository.findById(id).orElseThrow();
-        var cloth = clotheRepository.findById(clothId).orElseThrow();
+
+
+        var store = storeRepository.findById(request.getStoreId()).orElseThrow();
+        var cloth = clotheRepository.findById(request.getClothId()).orElseThrow();
         var material = materialRepository.findAllById(request.getMaterials()).stream().collect(Collectors.toSet());
         var laundry = SpecialLaundry.builder().name(request.getName())
                .store(store)
@@ -67,6 +67,25 @@ public class SpecialLaundryService{
 
     private SpecialServiceInfoDTO mapToDTO(SpecialLaundry dto) {
         return mapper.map(dto, SpecialServiceInfoDTO.class);
+    }
+
+    public SpecialServiceInfoDTO updateSpecialService(SpecialServiceRequest request, long id) {
+        var editSpecialService = serviceRepository.findById(id).orElseThrow();
+        var cloth = clotheRepository.findById(request.getClothId()).orElseThrow();
+        var material = materialRepository.findAllById(request.getMaterials()).stream().collect(Collectors.toSet());
+
+        editSpecialService.setName(request.getName());
+        editSpecialService.setDescription(request.getDescription());
+        editSpecialService.setUnit(request.getUnit());
+        editSpecialService.setMaterials(material);
+        editSpecialService.setIsDeleted(request.getIsDeleted());
+        editSpecialService.setPrice(request.getPrice());
+        editSpecialService.setImageBanner(request.getImage());
+        editSpecialService.setCloth(cloth);
+
+        var newService = serviceRepository.save(editSpecialService);
+        return  mapToDTO(newService);
+
     }
 }
 

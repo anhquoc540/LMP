@@ -1,4 +1,4 @@
-package com.project.SWP391.payload;
+package com.project.SWP391.responses.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClothDTO {
+public class PriceInWeightDTO {
+
     private Long id;
-    private String name;
+    private float price;
+    private int from;
+    private int to;
+
+
 }

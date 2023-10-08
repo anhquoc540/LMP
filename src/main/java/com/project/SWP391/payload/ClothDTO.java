@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClotheDTO {
+public class ClothDTO {
     private Long id;
     private String name;
 }

@@ -6,7 +6,9 @@ import com.project.SWP391.entities.StandardLaundry;
 import com.project.SWP391.repositories.PriceRepository;
 import com.project.SWP391.repositories.StandardServiceRepository;
 import com.project.SWP391.repositories.StoreRepository;
+import com.project.SWP391.requests.SpecialServiceRequest;
 import com.project.SWP391.requests.StandardServiceRequest;
+import com.project.SWP391.responses.dto.PriceInWeightDTO;
 import com.project.SWP391.responses.dto.SpecialServiceInfoDTO;
 import com.project.SWP391.responses.dto.StandardServiceInfoDTO;
 import com.project.SWP391.security.utils.SecurityUtils;
@@ -63,9 +65,49 @@ public class StandardLaundryService {
                 .prices_weight(prices)
                 .build();
         var newService = serviceRepository.save(service);
-        Set<PriceBasedWeight> newPrcies = service.getPrices_weight().stream().peek(priceBasedWeight -> priceBasedWeight.setStandardLaundry(service)).collect(Collectors.toSet());
-        var savePrice = priceRepository.saveAll(newPrcies);
+        Set<PriceBasedWeight> newPrices = service.getPrices_weight().stream().peek(priceBasedWeight -> priceBasedWeight.setStandardLaundry(service)).collect(Collectors.toSet());
+        var savePrice = priceRepository.saveAll(newPrices);
         return mapToDTO(newService);
+    }
+
+    public StandardServiceInfoDTO updateStandardService(StandardServiceRequest request, long id) {
+        var editStandardService = serviceRepository.findById(id).orElseThrow();
+        Set<PriceBasedWeight> newPrices = request.getPrices_weight();
+        var prices = priceRepository.findAllByStandardLaundryId(editStandardService.getId());
+        for (var item: prices
+             ) {
+            for (var newItem: newPrices
+                 ) {
+                if(item.getId() == newItem.getId()){
+                    item.setPrice(newItem.getPrice());
+                    item.setFrom(newItem.getFrom());
+                    item.setTo(newItem.getTo());
+                }
+
+            }
+
+        }
+        if(editStandardService.getIsDeleted() == 1){
+            throw new RuntimeException("Service is not found");
+        }
+        editStandardService.setName(request.getName());
+        editStandardService.setDescription(request.getDescription());
+        var newService = serviceRepository.save(editStandardService);
+        var savePrice = priceRepository.saveAll(prices);
+        return  mapToDTO(newService);
+
+    }
+
+
+
+    public StandardServiceInfoDTO deleteSpecialService(long id) {
+        var editSpecialService = serviceRepository.findById(id).orElseThrow();
+
+        editSpecialService.setIsDeleted(1);
+
+        var newService = serviceRepository.save(editSpecialService);
+        return  mapToDTO(newService);
+
     }
 
 

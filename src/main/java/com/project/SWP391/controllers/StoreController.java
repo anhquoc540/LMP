@@ -64,5 +64,17 @@ public class StoreController {
         return ResponseEntity.ok(service.deleteSpecialService(id));
     }
 
+    @PutMapping("/standard-service/update/{id}")
+    @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<StandardServiceInfoDTO> updateStandardService(@RequestBody StandardServiceRequest request,@PathVariable(name = "id") long id) {
+        return ResponseEntity.ok(standardLaundryService.updateStandardService(request,id));
+    }
+
+    @DeleteMapping("/standard-service/delete/{id}")
+    @PreAuthorize("hasAuthority('store:delete')")
+    public ResponseEntity<StandardServiceInfoDTO> deleteStandardService(@PathVariable(name = "id") long id) {
+        return ResponseEntity.ok(standardLaundryService.deleteSpecialService(id));
+    }
+
 
 }

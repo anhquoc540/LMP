@@ -1,12 +1,9 @@
-package com.project.SWP391.responses;
+package com.project.SWP391.responses.dto;
 
-import com.project.SWP391.entities.Feedback;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Data
 @Builder

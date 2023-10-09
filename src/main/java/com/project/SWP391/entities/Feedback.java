@@ -3,6 +3,7 @@ package com.project.SWP391.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
 
@@ -22,13 +23,18 @@ public class Feedback implements Serializable {
     private User user;
 
     @ManyToOne
-    @JoinColumn (name = "service_id", nullable = false)
-    private Service service;
+    @JoinColumn (name = "special_id")
+    private SpecialLaundry specialLaundry;
+
+    @ManyToOne
+    @JoinColumn (name = "standard_id")
+    private StandardLaundry standardLaundry;
 
     @Column(name = "star")
     private int star;
 
     @Column(name = "contents")
+    @Nationalized
     private String content;
 
 }

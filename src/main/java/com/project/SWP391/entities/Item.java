@@ -2,10 +2,9 @@ package com.project.SWP391.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
-import java.util.Date;
+
 @Getter
 @Setter
 
@@ -22,11 +21,14 @@ public class Item implements Serializable {
     @Column(name = "quantity")
     private int quantity;
     @Column(name = "total_price")
-    private String total;
+    private float total;
 
     @ManyToOne
-    @JoinColumn (name = "service_id", nullable = false)
-    private Service service;
+    @JoinColumn (name = "special_id")
+    private SpecialLaundry specialLaundry;
+    @ManyToOne
+    @JoinColumn (name = "standard_id")
+    private StandardLaundry standardLaundry;
 
     @ManyToOne
     @JoinColumn (name = "order_id", nullable = false)

@@ -1,4 +1,4 @@
-package com.project.SWP391.responses;
+package com.project.SWP391.responses.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FeedbackDTO {
-    private String content;
-    private int star;
+public class MaterialDTO {
+    private Long id;
+    private String name;
 }

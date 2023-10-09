@@ -3,6 +3,7 @@ package com.project.SWP391.entities;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -11,22 +12,19 @@ import java.util.Set;
 @Setter
 
 @Entity
-@Table(name = "types", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})}
+@Table(name = "clothes", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})}
 )
 
-public class Type implements Serializable {
+public class Cloth implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @Column(name = "name")
+    @Nationalized
     private String name;
 
-    @ManyToOne
-    @JoinColumn (name = "store_id")
-    private Store store;
-
-    @OneToMany(mappedBy = "type")
-    private Set<Service> services ;
+    @OneToMany(mappedBy = "cloth")
+    private Set<SpecialLaundry> laundries;
 }

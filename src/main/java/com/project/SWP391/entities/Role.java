@@ -25,11 +25,7 @@ public enum Role {
                     ADMIN_READ,
                     ADMIN_UPDATE,
                     ADMIN_DELETE,
-                    ADMIN_CREATE,
-                    STORE_READ,
-                    STORE_UPDATE,
-                    STORE_DELETE,
-                    STORE_CREATE
+                    ADMIN_CREATE
             )
     ),
    STORE(

@@ -1,18 +1,24 @@
 package com.project.SWP391.controllers;
 
+import com.project.SWP391.requests.SpecialServiceRequest;
+
+import com.project.SWP391.services.SpecialLaundryService;
 import io.swagger.v3.oas.annotations.Hidden;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/admin")
 @PreAuthorize("hasRole('ADMIN')")
+@RequiredArgsConstructor
 public class AdminController {
+
+
 
     @GetMapping("/user/all")
     @PreAuthorize("hasAuthority('admin:read')")
@@ -25,6 +31,8 @@ public class AdminController {
     public String getAllStores() {
         return "GET:: admin controller";
     }
+
+
 
     @GetMapping("/type/all")
     @PreAuthorize("hasAuthority('admin:read')")

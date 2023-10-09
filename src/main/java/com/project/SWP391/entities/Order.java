@@ -29,7 +29,7 @@ public class Order implements Serializable {
     @Nationalized
     private String noteText;
     @Column(name = "total_price")
-    private String total;
+    private float total;
     @Column(name = "status")
     private int status;
     @Column(name = "isReport")

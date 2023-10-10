@@ -1,54 +1,44 @@
 package com.project.SWP391.config;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.info.License;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
-import io.swagger.v3.oas.annotations.servers.Server;
+import java.util.List;
 
-@OpenAPIDefinition(
-        info = @Info(
-                contact = @Contact(
-                        name = "Anh Quoc Nguyen",
-                        email = "anhquocnguyen290@gmaol.com"
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-                ),
-                description = "OpenApi documentation for Spring Security",
-                title = "OpenApi specification - Alibou",
-                version = "1.0",
-                license = @License(
-                        name = "Licence name",
-                        url = "https://some-url.com"
-                ),
-                termsOfService = "Terms of service"
-        ),
-        servers = {
-                @Server(
-                        description = "Local ENV",
-                        url = "http://localhost:8001"
-                ),
-                @Server(
-                        description = "PROD ENV",
-                        url = "https://swp391-production-7611.up.railway.app/"
-                )
-        },
-        security = {
-                @SecurityRequirement(
-                        name = "bearerAuth"
-                )
-        }
-)
-@SecurityScheme(
-        name = "bearerAuth",
-        description = "JWT auth description",
-        scheme = "bearer",
-        type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT",
-        in = SecuritySchemeIn.HEADER
-)
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
+
+@Configuration
 public class OpenApiConfig {
+
+    @Value("${bezkoder.openapi.dev-url}")
+    private String devUrl;
+
+    @Value("${bezkoder.openapi.prod-url}")
+    private String prodUrl;
+
+    @Bean
+    public OpenAPI myOpenAPI() {
+        Server devServer = new Server();
+        devServer.setUrl(devUrl);
+        devServer.setDescription("Server URL in Development environment");
+
+        Server prodServer = new Server();
+        prodServer.setUrl(prodUrl);
+        prodServer.setDescription("Server URL in Production environment");
+
+
+
+
+
+        Info info = new Info()
+                .title("Tutorial Management API")
+                .version("1.0")
+                .description("This API exposes endpoints to manage tutorials.").termsOfService("https://www.bezkoder.com/terms");
+
+
+        return new OpenAPI().info(info).servers(List.of(devServer, prodServer));
+    }
 }

@@ -55,24 +55,39 @@ public class StandardLaundryService {
 
     public StandardServiceInfoDTO createStandardService(StandardServiceRequest request){
         var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
-        Set<PriceBasedWeight> prices = request.getPrices_weight();
+
 
 
         var service = StandardLaundry.builder().store(store)
                 .name(request.getName())
                 .isDeleted(0)
                 .description(request.getDescription())
-                .prices_weight(prices)
                 .build();
         var newService = serviceRepository.save(service);
-        Set<PriceBasedWeight> newPrices = service.getPrices_weight().stream().peek(priceBasedWeight -> priceBasedWeight.setStandardLaundry(service)).collect(Collectors.toSet());
-        var savePrice = priceRepository.saveAll(newPrices);
+
+        Set<PriceInWeightDTO> newPrices = request.getPrices_weight();
+        var prices = priceRepository.findAllByStandardLaundryId(newService.getId());
+        for (var item: prices
+        ) {
+            for (var newItem: newPrices
+            ) {
+                if(item.getId() == newItem.getId()){
+                    item.setPrice(newItem.getPrice());
+                    item.setFrom(newItem.getFrom());
+                    item.setTo(newItem.getTo());
+                }
+
+            }
+
+        }
+
+        var savePrice = priceRepository.saveAll(prices);
         return mapToDTO(newService);
     }
 
     public StandardServiceInfoDTO updateStandardService(StandardServiceRequest request, long id) {
         var editStandardService = serviceRepository.findById(id).orElseThrow();
-        Set<PriceBasedWeight> newPrices = request.getPrices_weight();
+        Set<PriceInWeightDTO> newPrices = request.getPrices_weight();
         var prices = priceRepository.findAllByStandardLaundryId(editStandardService.getId());
         for (var item: prices
              ) {

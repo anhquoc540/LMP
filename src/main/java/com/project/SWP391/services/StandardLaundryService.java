@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -55,6 +56,8 @@ public class StandardLaundryService {
 
     public StandardServiceInfoDTO createStandardService(StandardServiceRequest request){
         var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
+        var prices = request.getPrices_weight().stream().map(priceInWeightDTO -> mapToEntity(priceInWeightDTO)).collect(Collectors.toSet());
+
 
 
 
@@ -62,25 +65,13 @@ public class StandardLaundryService {
                 .name(request.getName())
                 .isDeleted(0)
                 .description(request.getDescription())
+                .prices_weight(prices)
                 .build();
+
+
+
         var newService = serviceRepository.save(service);
-
-        Set<PriceInWeightDTO> newPrices = request.getPrices_weight();
-        var prices = priceRepository.findAllByStandardLaundryId(newService.getId());
-        for (var item: prices
-        ) {
-            for (var newItem: newPrices
-            ) {
-                if(item.getId() == newItem.getId()){
-                    item.setPrice(newItem.getPrice());
-                    item.setFrom(newItem.getFrom());
-                    item.setTo(newItem.getTo());
-                }
-
-            }
-
-        }
-
+        Set<PriceBasedWeight> newPrices = service.getPrices_weight().stream().peek(priceBasedWeight -> priceBasedWeight.setStandardLaundry(service)).collect(Collectors.toSet());
         var savePrice = priceRepository.saveAll(prices);
         return mapToDTO(newService);
     }
@@ -128,6 +119,10 @@ public class StandardLaundryService {
 
     private StandardServiceInfoDTO mapToDTO(StandardLaundry dto) {
         return mapper.map(dto, StandardServiceInfoDTO.class);
+    }
+
+    private PriceBasedWeight mapToEntity(PriceInWeightDTO dto){
+        return mapper.map(dto, PriceBasedWeight.class);
     }
 
 }

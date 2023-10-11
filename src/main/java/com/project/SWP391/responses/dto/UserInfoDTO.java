@@ -18,4 +18,5 @@ public class UserInfoDTO {
     private String address;
     private int status;
 
+    private String role;
 }

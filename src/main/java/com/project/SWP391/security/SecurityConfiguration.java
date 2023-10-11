@@ -48,6 +48,7 @@ public class SecurityConfiguration {
         http
                 .csrf()
                 .disable()
+                .cors().and()
                 .authorizeHttpRequests(req ->
                         req.requestMatchers("/api/v1/auth/**",
                                         "/v2/api-docs",

@@ -19,7 +19,7 @@ public class StandardServiceRequest {
     private Long id;
     private String name;
     private String description;
-    private Set<PriceBasedWeight> prices_weight;
+    private Set<PriceInWeightDTO> prices_weight;
 
 
 }

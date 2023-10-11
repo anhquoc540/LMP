@@ -2,9 +2,12 @@ package com.project.SWP391.controllers;
 
 import com.project.SWP391.requests.SpecialServiceRequest;
 
+import com.project.SWP391.responses.dto.UserInfoDTO;
 import com.project.SWP391.services.SpecialLaundryService;
+import com.project.SWP391.services.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,17 +16,22 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
+
 @RequestMapping("/api/v1/admin")
+@CrossOrigin
 @PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
 public class AdminController {
+
+    @Autowired
+    private final UserService service;
 
 
 
     @GetMapping("/user/all")
     @PreAuthorize("hasAuthority('admin:read')")
-    public String getAllUsers() {
-        return "GET:: admin controller";
+    public ResponseEntity<List<UserInfoDTO>> getAllUsers() {
+        return ResponseEntity.ok(service.getAllUsers());
     }
 
     @GetMapping("/store/all")

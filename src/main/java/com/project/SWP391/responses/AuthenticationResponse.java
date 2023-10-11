@@ -24,5 +24,5 @@ public class AuthenticationResponse {
     private String refreshToken;
     private UserInfoDTO userInfoDTO;
     private List<FeedbackDTO> feedbacks;
-
+    private String role;
 }

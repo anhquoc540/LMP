@@ -7,6 +7,7 @@ import com.project.SWP391.responses.dto.StandardServiceInfoDTO;
 import com.project.SWP391.security.utils.SecurityUtils;
 import com.project.SWP391.services.SpecialLaundryService;
 import com.project.SWP391.services.StandardLaundryService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +18,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/store")
 @PreAuthorize("hasRole('STORE')")
+@CrossOrigin
 @RequiredArgsConstructor
+@Tag(name = "Store", description = "Store management APIs")
 public class StoreController {
     private final SpecialLaundryService service;
     private final StandardLaundryService standardLaundryService;

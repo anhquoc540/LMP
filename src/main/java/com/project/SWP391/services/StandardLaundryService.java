@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -55,7 +56,9 @@ public class StandardLaundryService {
 
     public StandardServiceInfoDTO createStandardService(StandardServiceRequest request){
         var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
-        Set<PriceBasedWeight> prices = request.getPrices_weight();
+        var prices = request.getPrices_weight().stream().map(priceInWeightDTO -> mapToEntity(priceInWeightDTO)).collect(Collectors.toSet());
+
+
 
 
         var service = StandardLaundry.builder().store(store)
@@ -64,15 +67,18 @@ public class StandardLaundryService {
                 .description(request.getDescription())
                 .prices_weight(prices)
                 .build();
+
+
+
         var newService = serviceRepository.save(service);
         Set<PriceBasedWeight> newPrices = service.getPrices_weight().stream().peek(priceBasedWeight -> priceBasedWeight.setStandardLaundry(service)).collect(Collectors.toSet());
-        var savePrice = priceRepository.saveAll(newPrices);
+        var savePrice = priceRepository.saveAll(prices);
         return mapToDTO(newService);
     }
 
     public StandardServiceInfoDTO updateStandardService(StandardServiceRequest request, long id) {
         var editStandardService = serviceRepository.findById(id).orElseThrow();
-        Set<PriceBasedWeight> newPrices = request.getPrices_weight();
+        Set<PriceInWeightDTO> newPrices = request.getPrices_weight();
         var prices = priceRepository.findAllByStandardLaundryId(editStandardService.getId());
         for (var item: prices
              ) {
@@ -113,6 +119,10 @@ public class StandardLaundryService {
 
     private StandardServiceInfoDTO mapToDTO(StandardLaundry dto) {
         return mapper.map(dto, StandardServiceInfoDTO.class);
+    }
+
+    private PriceBasedWeight mapToEntity(PriceInWeightDTO dto){
+        return mapper.map(dto, PriceBasedWeight.class);
     }
 
 }

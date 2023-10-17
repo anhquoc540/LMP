@@ -42,6 +42,9 @@ public class Store {
     @JoinColumn(name = "user_id")
     private User user;
     @OneToMany(mappedBy = "store")
-    private Set<SpecialLaundry> laundries;
+    private Set<SpecialLaundry> specials;
+
+    @OneToMany(mappedBy = "store")
+    private Set<StandardLaundry> standards;
 
 }

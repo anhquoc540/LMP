@@ -1,5 +1,4 @@
 package com.project.SWP391.controllers;
-
 import com.project.SWP391.requests.SpecialServiceFilterRequest;
 import com.project.SWP391.requests.SpecialServiceRequest;
 import com.project.SWP391.responses.dto.StoreInfoDTO;
@@ -25,5 +24,6 @@ public class UserController
     public ResponseEntity<List<StoreInfoDTO>> getAllStoresByFilter(@RequestBody SpecialServiceFilterRequest request){
         return ResponseEntity.ok(service.getAllStoreByFilter(request));
     }
+
 
 }

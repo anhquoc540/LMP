@@ -22,11 +22,6 @@ public class TimeCategory implements Serializable {
     @Nationalized
     private String name;
 
-    @Column(name = "date_range")
-    @Nationalized
-    private String dateRange;
-
-
     @OneToMany(mappedBy = "timeCategory")
     private Set<Time> times ;
 }

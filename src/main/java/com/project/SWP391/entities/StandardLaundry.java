@@ -32,7 +32,7 @@ public class StandardLaundry {
     @Column(name = "isDeleted")
     private int isDeleted;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn (name = "store_id")
     private Store store;
 

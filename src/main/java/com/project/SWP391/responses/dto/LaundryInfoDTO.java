@@ -12,20 +12,12 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class SpecialServiceInfoDTO {
+public class LaundryInfoDTO {
     private Long id;
     private String name;
 
     private String imageBanner;
     private String description;
-
-    private float price;
-
-    private String unit;
-
-    private Set<MaterialDTO> materials;
-    private ClothDTO cloth;
-
     private List<FeedbackDTO> feedbacks;
 
 }

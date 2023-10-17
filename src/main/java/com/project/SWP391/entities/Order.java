@@ -56,8 +56,8 @@ public class Order implements Serializable {
     private Set<Shipment> shipments;
 
     @ManyToOne
-    @JoinColumn (name = "standard_id")
-    private StandardLaundry standardLaundry;
+    @JoinColumn (name = "service_id")
+    private Laundry laundryService;
     @Column(name = "weight")
     private float weight;
 

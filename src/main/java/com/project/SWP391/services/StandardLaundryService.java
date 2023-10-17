@@ -2,14 +2,11 @@ package com.project.SWP391.services;
 
 import com.project.SWP391.entities.PriceBasedWeight;
 import com.project.SWP391.entities.SpecialLaundry;
-import com.project.SWP391.entities.StandardLaundry;
 import com.project.SWP391.repositories.PriceRepository;
 import com.project.SWP391.repositories.StandardServiceRepository;
 import com.project.SWP391.repositories.StoreRepository;
-import com.project.SWP391.requests.SpecialServiceRequest;
 import com.project.SWP391.requests.StandardServiceRequest;
 import com.project.SWP391.responses.dto.PriceInWeightDTO;
-import com.project.SWP391.responses.dto.SpecialServiceInfoDTO;
 import com.project.SWP391.responses.dto.StandardServiceInfoDTO;
 import com.project.SWP391.security.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;

@@ -11,7 +11,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StandardServiceInfoDTO {
+public class LaundryDetailInfoDTO {
     private Long id;
     private String name;
     private String description;

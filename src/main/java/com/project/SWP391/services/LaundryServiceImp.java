@@ -1,7 +1,8 @@
 package com.project.SWP391.services;
 
-import com.project.SWP391.entities.User;
+import com.project.SWP391.entities.Laundry;
 import com.project.SWP391.repositories.ClotheRepository;
+import com.project.SWP391.repositories.LaundryServiceRepository;
 import com.project.SWP391.repositories.MaterialRepository;
 import com.project.SWP391.repositories.SpecialServiceRepository;
 import com.project.SWP391.repositories.StoreRepository;
@@ -11,10 +12,7 @@ import com.project.SWP391.security.utils.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import com.project.SWP391.entities.SpecialLaundry;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -24,9 +22,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 
-public class SpecialLaundryService{
+public class LaundryServiceImp{
 
-    private  final SpecialServiceRepository serviceRepository;
+    private  final LaundryServiceRepository serviceRepository;
     private  final StoreRepository storeRepository;
 
     private  final ClotheRepository clotheRepository;
@@ -44,14 +42,14 @@ public class SpecialLaundryService{
 
     public List<SpecialServiceInfoDTO> getAllSpecialServiceForStore(){
         var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
-        List<SpecialLaundry> laundries = serviceRepository.findAllByStoreId(store.getId());
-        Predicate<SpecialLaundry> byDeleted = specialLaundry -> specialLaundry.getIsDeleted() == 0;
+        List<Laundry> laundries = serviceRepository.findAllByStoreId(store.getId());
+        Predicate<Laundry> byDeleted = laundry -> laundry.getIsDeleted() == 0;
         return  laundries.stream().filter(byDeleted).map(service -> mapToDTO(service)).collect(Collectors.toList());
 
     }
     public SpecialServiceInfoDTO getSpecialServiceForStore(Long id){
         var laundry = serviceRepository.findById(id).orElseThrow();
-        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
+        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal   ().getId());
         if((laundry.getStore()).getId() != store.getId()){
             throw new RuntimeException("You don't have permission to access this action");
         }

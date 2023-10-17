@@ -23,12 +23,10 @@ public class Feedback implements Serializable {
     private User user;
 
     @ManyToOne
-    @JoinColumn (name = "special_id")
-    private SpecialLaundry specialLaundry;
+    @JoinColumn (name = "service_id")
+    private LaundryService laundryService;
 
-    @ManyToOne
-    @JoinColumn (name = "standard_id")
-    private StandardLaundry standardLaundry;
+
 
     @Column(name = "star")
     private int star;

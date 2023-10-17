@@ -33,5 +33,5 @@ public class Cloth implements Serializable {
 
 
     @OneToMany(mappedBy = "cloth")
-    private Set<SpecialLaundry> laundries;
+    private Set<LaudryDetail> details;
 }

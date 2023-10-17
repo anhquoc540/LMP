@@ -22,8 +22,8 @@ public class Item implements Serializable {
     private float total;
 
     @ManyToOne
-    @JoinColumn (name = "special_id")
-    private SpecialLaundry specialLaundry;
+    @JoinColumn (name = "service_id")
+    private Laundry laundryService;
 
     @ManyToOne
     @JoinColumn (name = "order_id", nullable = false)

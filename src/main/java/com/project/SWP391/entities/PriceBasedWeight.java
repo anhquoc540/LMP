@@ -25,8 +25,8 @@ public class PriceBasedWeight implements Serializable {
     @Column(name = "price")
     private float price;
     @ManyToOne
-    @JoinColumn (name = "standard_id", nullable = false)
-    private StandardLaundry standardLaundry;
+    @JoinColumn (name = "service_id", nullable = false)
+    private Laundry laundryService;
 
 
 }

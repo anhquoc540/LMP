@@ -83,7 +83,7 @@ public class SpecialLaundryService{
     public SpecialServiceInfoDTO CreateSpecialServiceByStoreId(SpecialServiceRequest request){
 
 
-        var store = storeRepository.findById(SecurityUtils.getPrincipal().getId()).orElseThrow();
+        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
         var cloth = clotheRepository.findById(request.getClothId()).orElseThrow();
         var material = materialRepository.findAllById(request.getMaterials()).stream().collect(Collectors.toSet());
         var laundry = SpecialLaundry.builder().name(request.getName())
@@ -129,13 +129,13 @@ public class SpecialLaundryService{
 
     }
 
-    public SpecialServiceInfoDTO deleteSpecialService(long id) {
+    public void deleteSpecialService(long id) {
         var editSpecialService = serviceRepository.findById(id).orElseThrow();
 
         editSpecialService.setIsDeleted(1);
 
         var newService = serviceRepository.save(editSpecialService);
-        return  mapToDTO(newService);
+
 
     }
 

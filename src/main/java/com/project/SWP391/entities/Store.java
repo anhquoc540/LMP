@@ -32,8 +32,6 @@ public class Store {
     @Column(name="status")
     private int status;
 
-
-
     @OneToMany(mappedBy = "store")
     private Set<Time> times;
 

@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/store")
 @PreAuthorize("hasRole('STORE')")
+@CrossOrigin
 @RequiredArgsConstructor
 @Tag(name = "Store", description = "Store management APIs")
 public class StoreController {
@@ -63,7 +64,8 @@ public class StoreController {
     @DeleteMapping("/special-service/delete/{id}")
     @PreAuthorize("hasAuthority('store:delete')")
     public ResponseEntity<SpecialServiceInfoDTO> deleteSpecialService(@PathVariable(name = "id") long id) {
-        return ResponseEntity.ok(service.deleteSpecialService(id));
+        service.deleteSpecialService(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/standard-service/update/{id}")
@@ -75,7 +77,8 @@ public class StoreController {
     @DeleteMapping("/standard-service/delete/{id}")
     @PreAuthorize("hasAuthority('store:delete')")
     public ResponseEntity<StandardServiceInfoDTO> deleteStandardService(@PathVariable(name = "id") long id) {
-        return ResponseEntity.ok(standardLaundryService.deleteSpecialService(id));
+      standardLaundryService.deleteSpecialService(id);
+        return ResponseEntity.noContent().build();
     }
 
 

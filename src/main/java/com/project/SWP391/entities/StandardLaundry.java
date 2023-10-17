@@ -39,6 +39,8 @@ public class StandardLaundry {
     @OneToMany (mappedBy = "standardLaundry")
     private Set<Feedback> feedbacks ;
 
+
     @OneToMany (mappedBy = "standardLaundry")
-    private Set<Item> items ;
+    private Set<Order> orders ;
+
 }

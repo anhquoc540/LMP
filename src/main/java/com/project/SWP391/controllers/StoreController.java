@@ -7,10 +7,12 @@ import com.project.SWP391.responses.dto.LaundryInfoDTO;
 
 
 import com.project.SWP391.responses.dto.StoreInfoDTO;
+import com.project.SWP391.responses.dto.UserInfoDTO;
 import com.project.SWP391.services.LaundryServiceImp;
 
 
 import com.project.SWP391.services.StoreService;
+import com.project.SWP391.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
@@ -29,7 +31,19 @@ import java.util.List;
 public class StoreController {
     private final LaundryServiceImp service;
     private final StoreService storeService;
+    private final UserService userService;
 
+    @GetMapping("/profile")
+    @PreAuthorize("hasAuthority('store:read')")
+    public ResponseEntity<UserInfoDTO> getProfile() {
+        return ResponseEntity.ok(userService.getCurrentUser());
+    }
+
+    @PutMapping("/profile/update/{id}")
+    @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<UserInfoDTO> updateProfile(@PathVariable Long id, @RequestBody UserInfoDTO request) {
+        return ResponseEntity.ok(userService.updateUser(id,request));
+    }
 
    @GetMapping("/special-service/all")
    @PreAuthorize("hasAuthority('store:read')")

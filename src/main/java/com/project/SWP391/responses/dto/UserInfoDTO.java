@@ -18,6 +18,7 @@ public class UserInfoDTO {
     private String phone;
     private String fullName;
     private String address;
+    private String image;
     private int status;
 
     private String role;

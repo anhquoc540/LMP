@@ -9,9 +9,13 @@ public interface UserService {
     List<UserInfoDTO> getAllUsers();
     UserInfoDTO getUser(Long id);
 
-    UserInfoDTO updateUser(Long id, int status);
+    UserInfoDTO updateUserForAdmin(Long id, int status);
 
-    UserInfoDTO deleteUser(Long id);
+    UserInfoDTO updateUser(Long id, UserInfoDTO request);
+
+    void deleteUser(Long id);
+
+    UserInfoDTO getCurrentUser();
 
 
 }

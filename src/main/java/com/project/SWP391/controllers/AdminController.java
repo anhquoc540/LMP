@@ -34,16 +34,23 @@ public class AdminController {
         return ResponseEntity.ok(service.getAllUsers());
     }
 
+    @GetMapping("/user/{id}")
+    @PreAuthorize("hasAuthority('admin:read')")
+    public ResponseEntity<UserInfoDTO> getUser(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getUser(id));
+    }
+
     @PutMapping("/user/update/{id}")
     @PreAuthorize("hasAuthority('admin:update')")
     public ResponseEntity<UserInfoDTO> disableUser(@PathVariable Long id, int status) {
-        return ResponseEntity.ok(service.updateUser(id, status));
+        return ResponseEntity.ok(service.updateUserForAdmin(id, status));
     }
 
     @DeleteMapping("/user/delete/{id}")
-    @PreAuthorize("hasAuthority('admin:update')")
-    public ResponseEntity<UserInfoDTO> deleteUser(@PathVariable Long id, @RequestParam int status) {
-        return ResponseEntity.ok(service.updateUser(id, status));
+    @PreAuthorize("hasAuthority('admin:delete')")
+    public ResponseEntity<UserInfoDTO> deleteUser(@PathVariable Long id) {
+        service.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
 

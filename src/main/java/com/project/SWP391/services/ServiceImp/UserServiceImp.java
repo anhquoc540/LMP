@@ -4,8 +4,10 @@ package com.project.SWP391.services.ServiceImp;
 import com.project.SWP391.entities.User;
 import com.project.SWP391.repositories.UserRepository;
 import com.project.SWP391.responses.dto.UserInfoDTO;
+import com.project.SWP391.security.utils.SecurityUtils;
 import com.project.SWP391.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.security.SecurityUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +40,7 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public UserInfoDTO updateUser(Long id, int status) {
+    public UserInfoDTO updateUserForAdmin(Long id, int status) {
         var user = userRepository.findById(id).orElseThrow();
         user.setStatus(status);
         var newUser = userRepository.save(user);
@@ -46,11 +48,30 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public UserInfoDTO deleteUser(Long id) {
+    public UserInfoDTO updateUser(Long id, UserInfoDTO request) {
+        var user = userRepository.findById(id).orElseThrow();
+        user.setAddress(request.getAddress());
+        user.setPhone(request.getPhone());
+        user.setImage(request.getImage());
+        user.setFullName(request.getFullName());
+        var newUser = userRepository.save(user);
+        return mapToDTO(newUser);
+    }
+
+
+
+    @Override
+    public void deleteUser(Long id) {
         var user = userRepository.findById(id).orElseThrow();
         user.setStatus(3);
         var newUser = userRepository.save(user);
-        return mapToDTO(newUser);
+
+    }
+
+    @Override
+    public UserInfoDTO getCurrentUser() {
+        var user = userRepository.findById(SecurityUtils.getPrincipal().getId()).orElseThrow();
+        return mapToDTO(user);
     }
 
     private UserInfoDTO mapToDTO(User dto) {

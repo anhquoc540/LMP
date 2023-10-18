@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
@@ -14,10 +13,17 @@ import java.util.Set;
 @NoArgsConstructor
 public class LaundryInfoDTO {
     private Long id;
+    private Long storeId ;
     private String name;
-
     private String imageBanner;
     private String description;
-    private List<FeedbackDTO> feedbacks;
+
+    private List<LaundryDetailInfoDTO> details;
+
+    private List<MaterialDTO> materials;
+    private ClothDTO cloth;
+
+
+    private Boolean isStandard ;
 
 }

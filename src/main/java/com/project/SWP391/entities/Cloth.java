@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -33,5 +34,5 @@ public class Cloth implements Serializable {
 
 
     @OneToMany(mappedBy = "cloth")
-    private Set<LaudryDetail> details;
+    private List<Laundry> laundryServices;
 }

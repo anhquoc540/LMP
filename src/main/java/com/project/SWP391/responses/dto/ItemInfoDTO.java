@@ -15,6 +15,6 @@ public class ItemInfoDTO {
     private float total;
     private int quantity;
     private float weight;
-    private SpecialServiceResponseInItem specialServiceInfoDTO;
-    private StandardServiceInfoDTO standardServiceInfoDTO;
+    private LaundryInfoDTO laundryServices;
+
 }

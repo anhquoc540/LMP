@@ -2,13 +2,18 @@ package com.project.SWP391.controllers;
 
 import com.project.SWP391.requests.SpecialServiceRequest;
 import com.project.SWP391.requests.StandardServiceRequest;
-import com.project.SWP391.responses.dto.SpecialServiceInfoDTO;
-import com.project.SWP391.responses.dto.StandardServiceInfoDTO;
-import com.project.SWP391.security.utils.SecurityUtils;
-import com.project.SWP391.services.SpecialLaundryService;
-import com.project.SWP391.services.StandardLaundryService;
+import com.project.SWP391.requests.StoreRegisterRequest;
+import com.project.SWP391.responses.dto.LaundryInfoDTO;
+
+
+import com.project.SWP391.responses.dto.StoreInfoDTO;
+import com.project.SWP391.services.LaundryServiceImp;
+
+
+import com.project.SWP391.services.StoreService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,64 +27,87 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Store", description = "Store management APIs")
 public class StoreController {
-    private final SpecialLaundryService service;
-    private final StandardLaundryService standardLaundryService;
+    private final LaundryServiceImp service;
+    private final StoreService storeService;
+
 
    @GetMapping("/special-service/all")
    @PreAuthorize("hasAuthority('store:read')")
-    public ResponseEntity<List<SpecialServiceInfoDTO>> getAllSpecialServices() {
+    public ResponseEntity<List<LaundryInfoDTO>> getAllSpecialServices() {
         return ResponseEntity.ok(service.getAllSpecialServiceForStore());
     }
 
     @GetMapping("/special-service/get/{id}")
     @PreAuthorize("hasAuthority('store:read')")
-    public ResponseEntity<SpecialServiceInfoDTO> getSpecialServicesById(@PathVariable(name = "id") long id) {
-       return  ResponseEntity.ok(service.getSpecialServiceForStore(id));
+    public ResponseEntity<LaundryInfoDTO> getSpecialServicesById(@PathVariable(name = "id") long id) {
+       return  ResponseEntity.ok(service.getServiceForStore(id));
     }
 
     @GetMapping("/standard-service/get")
     @PreAuthorize("hasAuthority('store:read')")
-    public ResponseEntity<StandardServiceInfoDTO> getStandardServicesById() {
-        return  ResponseEntity.ok(standardLaundryService.getStandardServiceForStore());
+    public ResponseEntity<LaundryInfoDTO> getStandardServicesById() {
+        return  ResponseEntity.ok(service.getStandardServiceForStore());
     }
 
     @PostMapping("/special-service/create")
     @PreAuthorize("hasAuthority('store:create')")
-    public ResponseEntity<SpecialServiceInfoDTO> createSpecialService(@RequestBody SpecialServiceRequest request) {
+    public ResponseEntity<LaundryInfoDTO> createSpecialService(@RequestBody SpecialServiceRequest request) {
         return ResponseEntity.ok(service.CreateSpecialServiceByStoreId(request));
     }
 
     @PostMapping("/standard-service/create")
     @PreAuthorize("hasAuthority('store:create')")
-    public ResponseEntity<StandardServiceInfoDTO> createStandardService(@RequestBody StandardServiceRequest request) {
-        return ResponseEntity.ok(standardLaundryService.createStandardService(request));
+    public ResponseEntity<LaundryInfoDTO> createStandardService(@RequestBody StandardServiceRequest request) {
+        return ResponseEntity.ok(service.createStandardService(request));
     }
 
     @PutMapping("/special-service/update/{id}")
     @PreAuthorize("hasAuthority('store:update')")
-    public ResponseEntity<SpecialServiceInfoDTO> updateSpecialService(@RequestBody SpecialServiceRequest request,@PathVariable(name = "id") long id) {
+    public ResponseEntity<LaundryInfoDTO> updateSpecialService(@RequestBody SpecialServiceRequest request,@PathVariable(name = "id") long id) {
         return ResponseEntity.ok(service.updateSpecialService(request,id));
     }
 
     @DeleteMapping("/special-service/delete/{id}")
     @PreAuthorize("hasAuthority('store:delete')")
-    public ResponseEntity<SpecialServiceInfoDTO> deleteSpecialService(@PathVariable(name = "id") long id) {
-        service.deleteSpecialService(id);
+    public ResponseEntity deleteSpecialService(@PathVariable(name = "id") long id) {
+        service.deleteService(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/standard-service/update/{id}")
     @PreAuthorize("hasAuthority('store:update')")
-    public ResponseEntity<StandardServiceInfoDTO> updateStandardService(@RequestBody StandardServiceRequest request,@PathVariable(name = "id") long id) {
-        return ResponseEntity.ok(standardLaundryService.updateStandardService(request,id));
+    public ResponseEntity<LaundryInfoDTO> updateStandardService(@RequestBody StandardServiceRequest request,@PathVariable(name = "id") long id) {
+        return ResponseEntity.ok(service.updateStandardService(request,id));
     }
 
     @DeleteMapping("/standard-service/delete/{id}")
     @PreAuthorize("hasAuthority('store:delete')")
-    public ResponseEntity<StandardServiceInfoDTO> deleteStandardService(@PathVariable(name = "id") long id) {
-      standardLaundryService.deleteSpecialService(id);
+    public ResponseEntity deleteStandardService(@PathVariable(name = "id") long id) {
+        service.deleteService(id);
         return ResponseEntity.noContent().build();
+
     }
+
+
+    @PostMapping("/create")
+    @PreAuthorize("hasAuthority('store:create'")
+    public ResponseEntity<StoreInfoDTO> createStore(@RequestBody StoreRegisterRequest request){
+       return ResponseEntity.ok(storeService.createStore(request));
+    }
+
+    @GetMapping("/get")
+    @PreAuthorize("hasAuthority('store:read'")
+    public ResponseEntity<StoreInfoDTO> getStore(){
+        return ResponseEntity.ok(storeService.getCurrentStore());
+    }
+
+    @PutMapping("/update")
+    @PreAuthorize("hasAuthority('store:update'")
+    public ResponseEntity<StoreInfoDTO> updateStore(@RequestBody StoreInfoDTO request){
+        return ResponseEntity.ok(storeService.updateStore(request));
+    }
+
+
 
 
 }

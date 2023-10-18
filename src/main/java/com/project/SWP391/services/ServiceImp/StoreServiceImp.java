@@ -1,16 +1,22 @@
 package com.project.SWP391.services.ServiceImp;
 
 
-import com.project.SWP391.entities.SpecialLaundry;
+import com.project.SWP391.entities.Laundry;
+
 
 import com.project.SWP391.entities.Store;
 import com.project.SWP391.entities.User;
-import com.project.SWP391.repositories.SpecialServiceRepository;
+import com.project.SWP391.repositories.LaundryServiceRepository;
+
 import com.project.SWP391.repositories.StoreRepository;
+import com.project.SWP391.repositories.UserRepository;
 import com.project.SWP391.requests.SpecialServiceFilterRequest;
-import com.project.SWP391.responses.dto.SpecialServiceInfoDTO;
+import com.project.SWP391.requests.StoreRegisterRequest;
+import com.project.SWP391.responses.dto.LaundryInfoDTO;
+
 import com.project.SWP391.responses.dto.StoreInfoDTO;
 import com.project.SWP391.responses.dto.UserInfoDTO;
+import com.project.SWP391.security.utils.SecurityUtils;
 import com.project.SWP391.services.StoreService;
 import com.project.SWP391.specifications.CustomServiceSpec;
 
@@ -23,59 +29,91 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class StoreServiceImp implements StoreService {
 
-    private final SpecialServiceRepository specialServiceRepository;
+    private final LaundryServiceRepository serviceRepository;
     private final StoreRepository storeRepository;
+    private final UserRepository  userRepository;
     @Autowired
     ModelMapper mapper;
 
     @Override
-    public StoreInfoDTO createStore(StoreInfoDTO request) {
-        return null;
+    public StoreInfoDTO createStore(StoreRegisterRequest request) {
+        var user = userRepository.findById(SecurityUtils.getPrincipal().getId()).orElseThrow();
+        var store = Store.builder()
+                .address(request.getAddress())
+                .phone(request.getPhone())
+                .name(request.getName())
+                .user(user).build();
+        return mapToDTO(store);
     }
 
     @Override
-    public StoreInfoDTO updateStore(StoreInfoDTO request, Long id) {
-        return null;
+    public StoreInfoDTO updateStore(StoreInfoDTO request) {
+        var user = userRepository.findById(SecurityUtils.getPrincipal().getId()).orElseThrow();
+        var store = storeRepository.findStoreByUserId(user.getId());
+        store.setAddress(request.getAddress());
+        store.setDistrict(request.getDistrict());
+        store.setName(request.getName());
+        store.setPhone(request.getPhone());
+        var newStore = storeRepository.save(store);
+        return mapToDTO(newStore);
     }
 
     @Override
-    public List<StoreInfoDTO> getStore() {
-        return null;
+    public StoreInfoDTO getCurrentStore() {
+       var user = userRepository.findById(SecurityUtils.getPrincipal().getId()).orElseThrow();
+       var store = storeRepository.findStoreByUserId(user.getId());
+       return mapToDTO(store);
 
+    }
 
+    @Override
+    public StoreInfoDTO getStoreById(Long id) {
+        var store = storeRepository.findById(id).orElseThrow();
+        return mapToDTO(store);
     }
 
     @Override
     public List<StoreInfoDTO> getAllStore() {
+        var list = storeRepository.findAll();
+        Predicate<Store> byDelete = store -> store.getStatus() == 1;
 
-        return null;
+        return list.stream().filter(byDelete).map(laundry -> mapToDTO(laundry)).collect(Collectors.toList());
+
     }
 
     @Override
     public void deleteStore(Long id) {
 
+        var store = storeRepository.findById(id).orElseThrow();
+        store.setStatus(0);
+        storeRepository.save(store);
     }
 
     @Override
     public List<StoreInfoDTO> getAllStoreByFilter(SpecialServiceFilterRequest request) {
         CustomServiceSpec spec = new CustomServiceSpec(request);
-        var list = specialServiceRepository.findAll(spec);
+          var list = serviceRepository.findAll(spec);
         List<Long> ids = new ArrayList<>();
-        for (SpecialLaundry item : list
+        for (Laundry item : list
              ) {
 
             ids.add(item.getId() );
 
         }
 
-        var stores = storeRepository.findAllById(specialServiceRepository.findAllStoreByFilter(ids));
+        var stores = storeRepository.findAllById(serviceRepository.findAllStoreByFilter(ids));
 
+        if(request.getDistrict() != null){
+            Predicate<Store> byDistrict = store -> store.getDistrict().equals(request.getDistrict());
+            return stores.stream().filter(byDistrict).map(store -> mapToDTO(store)).collect(Collectors.toList());
+        }
         return stores.stream().map(store -> mapToDTO(store)).collect(Collectors.toList());
 
     }

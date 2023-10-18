@@ -41,12 +41,16 @@ public class Laundry {
     private Boolean isStandard;
 
     @OneToMany(mappedBy = "laundryService")
-    List<LaudryDetail> details;
+    private Set<LaundryDetail> details;
 
     @ManyToMany
-    Set<Material> materials;
+    List<Material> materials;
+
     @OneToMany (mappedBy = "laundryService")
     private Set<Item> items ;
+
+    @OneToMany (mappedBy = "laundryService")
+    private Set<Item> feedbacks ;
 
     @ManyToOne
     @JoinColumn (name = "cloth_id")

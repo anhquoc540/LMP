@@ -1,5 +1,7 @@
 package com.project.SWP391.responses.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.SWP391.entities.Laundry;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +15,11 @@ import java.util.Set;
 @NoArgsConstructor
 public class LaundryDetailInfoDTO {
     private Long id;
-    private String name;
-    private String description;
-    private Set<PriceInWeightDTO> prices_weight;
+    private float price;
+    private int from;
+    private int to;
+    private String unit;
+
+    @JsonIgnore
+    private Laundry laundry;
 }

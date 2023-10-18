@@ -55,10 +55,5 @@ public class Order implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
     private Set<Shipment> shipments;
 
-    @ManyToOne
-    @JoinColumn (name = "service_id")
-    private Laundry laundryService;
-    @Column(name = "weight")
-    private float weight;
 
 }

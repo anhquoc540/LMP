@@ -1,6 +1,6 @@
 package com.project.SWP391.services.ServiceImp;
 
-import com.project.SWP391.entities.SpecialLaundry;
+
 import com.project.SWP391.entities.User;
 import com.project.SWP391.repositories.UserRepository;
 import com.project.SWP391.responses.dto.UserInfoDTO;

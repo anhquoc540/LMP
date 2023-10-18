@@ -1,4 +1,4 @@
-package com.project.SWP391.responses.dto;
+package com.project.SWP391.requests;
 
 import lombok.*;
 
@@ -8,8 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class StoreInfoDTO {
-    private Long id;
+public class StoreRegisterRequest {
+
     private String name;
     private String address;
     private String district;

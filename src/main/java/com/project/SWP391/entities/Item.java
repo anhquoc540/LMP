@@ -21,6 +21,10 @@ public class Item implements Serializable {
     @Column(name = "total_price")
     private float total;
 
+
+    @Column(name = "weight")
+    private float weight;
+
     @ManyToOne
     @JoinColumn (name = "service_id")
     private Laundry laundryService;

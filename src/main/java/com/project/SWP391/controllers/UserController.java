@@ -17,13 +17,10 @@ import java.util.List;
 public class UserController
 {
 
-    private final StoreService service ;
 
 
-    @GetMapping("special-service/filter")
-    public ResponseEntity<List<StoreInfoDTO>> getAllStoresByFilter(@RequestBody SpecialServiceFilterRequest request){
-        return ResponseEntity.ok(service.getAllStoreByFilter(request));
-    }
+
+
 
 
 }

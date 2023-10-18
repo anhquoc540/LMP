@@ -24,7 +24,7 @@ public class Feedback implements Serializable {
 
     @ManyToOne
     @JoinColumn (name = "service_id")
-    private LaundryService laundryService;
+    private Laundry laundryService;
 
 
 

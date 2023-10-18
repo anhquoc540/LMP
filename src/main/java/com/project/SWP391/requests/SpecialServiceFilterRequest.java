@@ -18,4 +18,6 @@ public class SpecialServiceFilterRequest {
     private List<Long> materials;
 
     private Long clothId;
+
+    private String district;
 }

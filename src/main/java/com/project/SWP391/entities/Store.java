@@ -1,15 +1,17 @@
 package com.project.SWP391.entities;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Nationalized;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
-
+@Builder
 @Entity
 @Table(name="stores")
 public class Store {
@@ -29,6 +31,9 @@ public class Store {
     @Nationalized
     private String address;
 
+    @Column(name = "district")
+    private String district;
+
     @Column(name="status")
     private int status;
 
@@ -42,9 +47,8 @@ public class Store {
     @JoinColumn(name = "user_id")
     private User user;
     @OneToMany(mappedBy = "store")
-    private Set<SpecialLaundry> specials;
+    private List<Laundry> laundryServices;
 
-    @OneToMany(mappedBy = "store")
-    private Set<StandardLaundry> standards;
+
 
 }

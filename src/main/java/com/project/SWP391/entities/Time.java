@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 @Setter
-
+@Getter
 @Entity
 @Table(name = "store_times")
 public class Time implements Serializable {

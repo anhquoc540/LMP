@@ -1,6 +1,8 @@
 package com.project.SWP391.requests;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.project.SWP391.responses.dto.LaundryDetailInfoDTO;
 import lombok.*;
 
 import java.util.List;
@@ -14,20 +16,18 @@ import java.util.List;
 public class SpecialServiceRequest {
 
 
+    private Long storeId;
 
     private String name;
     private String description;
 
-    private String image;
-
-    private float price;
-
-    private String unit;
-
+    private String imageBanner;
     private List<Long> materials;
 
+    private LaundryDetailInfoDTO details;
+
     private Long clothId;
-    private Long storeId;
+
     private int isDeleted;
 
 

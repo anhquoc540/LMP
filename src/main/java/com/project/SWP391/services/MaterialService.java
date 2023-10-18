@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface MaterialService {
     MaterialDTO createNewMaterial(MaterialDTO request);
-    MaterialDTO updateMaterial(MaterialDTO request, Long id);
+    MaterialDTO updateMaterial(String name, Long id);
 
     List<MaterialDTO> getAllMaterials();
 

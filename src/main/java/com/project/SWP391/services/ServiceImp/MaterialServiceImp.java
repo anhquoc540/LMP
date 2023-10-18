@@ -21,9 +21,11 @@ public class MaterialServiceImp implements MaterialService {
     }
 
     @Override
-    public MaterialDTO updateMaterial(MaterialDTO request, Long id) {
+    public MaterialDTO updateMaterial(String name, Long id) {
         return null;
     }
+
+
 
     @Override
     public List<MaterialDTO> getAllMaterials() {

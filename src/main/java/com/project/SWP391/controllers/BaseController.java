@@ -2,12 +2,15 @@ package com.project.SWP391.controllers;
 
 import com.project.SWP391.requests.SpecialServiceFilterRequest;
 import com.project.SWP391.responses.dto.LaundryInfoDTO;
+import com.project.SWP391.responses.dto.MaterialDTO;
 import com.project.SWP391.responses.dto.StoreInfoDTO;
 import com.project.SWP391.services.LaundryServiceImp;
+import com.project.SWP391.services.MaterialService;
 import com.project.SWP391.services.StoreService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +25,9 @@ public class BaseController {
     private final StoreService storeService ;
     private final LaundryServiceImp laundryServiceImp;
 
-    @GetMapping("/special-service/filter")
+    private final MaterialService materialService;
+
+    @GetMapping("/store/filter")
     public ResponseEntity<List<StoreInfoDTO>> getAllStoresByFilter(@RequestBody SpecialServiceFilterRequest request){
         return ResponseEntity.ok(storeService.getAllStoreByFilter(request));
     }
@@ -58,6 +63,10 @@ public class BaseController {
         return ResponseEntity.ok(storeService.getStoreById(id));
     }
 
+    @GetMapping("/material/all")
+    public ResponseEntity<List<MaterialDTO>> getAllMaterials() {
+        return ResponseEntity.ok(materialService.getAllMaterials());
+    }
 
 
 

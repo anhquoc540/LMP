@@ -1,11 +1,10 @@
 package com.project.SWP391.requests;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.project.SWP391.entities.PriceBasedWeight;
-import com.project.SWP391.responses.dto.PriceInWeightDTO;
+import com.project.SWP391.responses.dto.LaundryDetailInfoDTO;
 import lombok.*;
-import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -19,7 +18,8 @@ public class StandardServiceRequest {
     private Long id;
     private String name;
     private String description;
-    private Set<PriceInWeightDTO> prices_weight;
+    private List<LaundryDetailInfoDTO> details;
+    private String imageBanner;
 
 
 }

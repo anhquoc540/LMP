@@ -1,17 +1,20 @@
 package com.project.SWP391.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
-
+@Data
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "clothes", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})}
 )
 
@@ -25,6 +28,11 @@ public class Cloth implements Serializable {
     @Nationalized
     private String name;
 
+
+    @Column(name = "status")
+    private Integer status;
+
+
     @OneToMany(mappedBy = "cloth")
-    private Set<SpecialLaundry> laundries;
+    private List<Laundry> laundryServices;
 }

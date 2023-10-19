@@ -55,4 +55,5 @@ public class Order implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
     private Set<Shipment> shipments;
 
+
 }

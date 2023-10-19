@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
-import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -13,8 +13,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "special_services")
-public class SpecialLaundry implements Serializable {
+@Table(name = "services")
+public class Laundry {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -23,44 +24,35 @@ public class SpecialLaundry implements Serializable {
     @Column(name = "name")
     @Nationalized
     private String name;
-
     @Column(name = "description")
     @Nationalized
     private String description;
 
     @Column(name = "image")
     private String imageBanner;
-
-    @Column(name = "unit")
-    private String unit;
-
-    @Column(name = "price")
-    private float price;
-
-    @Column(name = "isDeleted")
-    private int isDeleted;
-
     @ManyToOne
-    @JoinColumn (name = "store_id")
+    @JoinColumn(name = "store_id")
     private Store store;
 
+    @Column(name = "isDeleted")
+    private Integer isDeleted;
+
+    @Column(name = "isStandard")
+    private Boolean isStandard;
+
+    @OneToMany(mappedBy = "laundryService")
+    private Set<LaundryDetail> details;
+
+    @ManyToMany
+    List<Material> materials;
+
+    @OneToMany (mappedBy = "laundryService")
+    private Set<Item> items ;
+
+    @OneToMany (mappedBy = "laundryService")
+    private Set<Item> feedbacks ;
 
     @ManyToOne
     @JoinColumn (name = "cloth_id")
     private Cloth cloth;
-
-    @ManyToMany
-    Set<Material> materials;
-
-
-
-    @OneToMany (mappedBy = "specialLaundry")
-    private Set<Feedback> feedbacks ;
-
-    @OneToMany (mappedBy = "specialLaundry")
-    private Set<Item> items ;
-
-
-
-
 }

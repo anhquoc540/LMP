@@ -5,15 +5,25 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StandardServiceInfoDTO {
+public class LaundryInfoDTO {
     private Long id;
+    private Long storeId ;
     private String name;
+    private String imageBanner;
     private String description;
-    private Set<PriceInWeightDTO> prices_weight;
+
+    private List<LaundryDetailInfoDTO> details;
+
+    private List<MaterialDTO> materials;
+    private ClothDTO cloth;
+
+
+    private Boolean isStandard ;
+
 }

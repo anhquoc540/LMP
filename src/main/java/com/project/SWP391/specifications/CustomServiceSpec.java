@@ -34,7 +34,7 @@ public class CustomServiceSpec extends SearchSpecification<SpecialServiceFilterR
             predicates.add(likeName);
         }
 
-        if (search.getMaterials() != null) {
+        if (search.getMaterials() != null && !search.getMaterials().isEmpty()) {
 
                 Predicate eqMaterials = criteriaBuilder.in(material.get("id")).value(search.getMaterials());
                 predicates.add(eqMaterials);

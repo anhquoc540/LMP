@@ -110,7 +110,7 @@ public class StoreServiceImp implements StoreService {
 
         var stores = storeRepository.findAllById(serviceRepository.findAllStoreByFilter(ids));
 
-        if(request.getDistrict() != null){
+        if(request.getDistrict() != null && !request.getDistrict().isBlank()){
             Predicate<Store> byDistrict = store -> store.getDistrict().equals(request.getDistrict());
             return stores.stream().filter(byDistrict).map(store -> mapToDTO(store)).collect(Collectors.toList());
         }

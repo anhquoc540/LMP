@@ -1,6 +1,9 @@
 package com.project.SWP391.responses.dto;
 
+import com.project.SWP391.responses.SpecialServiceResponseInItem;
 import lombok.*;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -14,4 +17,6 @@ public class StoreInfoDTO {
     private String address;
     private String district;
     private String phone;
+
+
 }

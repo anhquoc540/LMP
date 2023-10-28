@@ -222,6 +222,13 @@ public class LaundryServiceImp{
         var laundry = serviceRepository.findByStoreIdAndIsStandardTrue(store.getId());
         return mapToDTO(laundry);
     }
+
+    public LaundryInfoDTO getStandardServiceForCustomer(Long id) {
+
+
+        var laundry = serviceRepository.findByStoreIdAndIsStandardTrue(id);
+        return mapToDTO(laundry);
+    }
 }
 
 

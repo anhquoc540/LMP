@@ -16,8 +16,8 @@ import java.util.Set;
 public class LaundryDetailInfoDTO {
     private Long id;
     private float price;
-    private int from;
-    private int to;
+    private float from;
+    private float to;
     private String unit;
 
     @JsonIgnore

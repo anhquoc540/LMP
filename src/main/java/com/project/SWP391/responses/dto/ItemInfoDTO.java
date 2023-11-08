@@ -15,6 +15,6 @@ public class ItemInfoDTO {
     private float total;
     private int quantity;
     private float weight;
-    private LaundryInfoDTO laundryServices;
+    private LaundryInfoDTO laundryService;
 
 }

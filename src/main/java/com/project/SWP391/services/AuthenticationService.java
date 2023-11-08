@@ -69,6 +69,12 @@ public class AuthenticationService {
       throw new Exception("Email is existed");
     }
 
+    public Boolean checkEmail(String request) throws Exception {
+
+
+        return repository.existsByEmail(request);
+    }
+
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -78,7 +84,7 @@ public class AuthenticationService {
         );
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
-        var feedbacks = feedbackRepository.findAllByUserId(user.getId());
+
         var jwtToken = jwtService.generateToken((UserDetails) user);
         var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
 
@@ -94,11 +100,41 @@ public class AuthenticationService {
 
     }
 
-    private void saveUserToken(User user, String jwtToken) {
-       Token existedToken = tokenRepository.findByUserId(user.getId());
-        if (existedToken != null){
-            tokenRepository.delete(existedToken);
+    public AuthenticationResponse authenticateForCustomer(AuthenticationRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+        var user = repository.findByEmail(request.getEmail())
+                .orElseThrow();
+
+        if(user.getRole().equals("USER")){
+            var jwtToken = jwtService.generateToken((UserDetails) user);
+            var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
+
+
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+            return AuthenticationResponse.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .userInfoDTO(mapper.map(user, UserInfoDTO.class))
+                    .build();
+
         }
+        return null;
+
+
+
+    }
+
+    private void saveUserToken(User user, String jwtToken) {
+//       Token existedToken = tokenRepository.findByUserId(user.getId());
+//        if (existedToken != null){
+//            tokenRepository.delete(existedToken);
+//        }
             var token = Token.builder()
                     .user(user)
                     .token(jwtToken)

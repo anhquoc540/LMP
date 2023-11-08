@@ -23,6 +23,5 @@ public class AuthenticationResponse {
     @JsonProperty("refresh_token")
     private String refreshToken;
     private UserInfoDTO userInfoDTO;
-    private List<FeedbackDTO> feedbacks;
-    private String role;
+
 }

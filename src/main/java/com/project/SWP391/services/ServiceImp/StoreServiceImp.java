@@ -50,6 +50,7 @@ public class StoreServiceImp implements StoreService {
                 .phone(request.getPhone())
                 .name(request.getName())
                 .user(user).build();
+        storeRepository.save(store);
         return mapToDTO(store);
     }
 

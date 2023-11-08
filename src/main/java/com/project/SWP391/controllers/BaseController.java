@@ -1,14 +1,9 @@
 package com.project.SWP391.controllers;
 
+import com.project.SWP391.requests.CreateOrderRequest;
 import com.project.SWP391.requests.SpecialServiceFilterRequest;
-import com.project.SWP391.responses.dto.ClothDTO;
-import com.project.SWP391.responses.dto.LaundryInfoDTO;
-import com.project.SWP391.responses.dto.MaterialDTO;
-import com.project.SWP391.responses.dto.StoreInfoDTO;
-import com.project.SWP391.services.ClothService;
-import com.project.SWP391.services.LaundryServiceImp;
-import com.project.SWP391.services.MaterialService;
-import com.project.SWP391.services.StoreService;
+import com.project.SWP391.responses.dto.*;
+import com.project.SWP391.services.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +25,8 @@ public class BaseController {
     private final MaterialService materialService;
 
     private final ClothService clothService;
+
+    private final OrderService orderService;
 
     @PostMapping("/store/filter")
     public ResponseEntity<List<StoreInfoDTO>> getAllStoresByFilter(@RequestBody SpecialServiceFilterRequest request){
@@ -57,8 +54,8 @@ public class BaseController {
     }
 
 
-    @GetMapping("/service/{id}")
-    public ResponseEntity<LaundryInfoDTO> getService(@PathVariable Long id){
+    @GetMapping("/service/{id}") 
+    public ResponseEntity<LaundryInfoDTO> getService(@PathVariable("id") Long id){
         return ResponseEntity.ok(laundryServiceImp.getServiceCustomer(id));
     }
 
@@ -82,6 +79,13 @@ public class BaseController {
         return ResponseEntity.ok(clothService.getAllCloth());
     }
 
+    @PostMapping("/order/create")
+    public ResponseEntity<OrderInfoDTO > createOrder(@RequestBody CreateOrderRequest request){
+        return ResponseEntity.ok(orderService.  createOrder(request));
+    }
 
-
+    @GetMapping("/order/all")
+    public ResponseEntity<List<OrderInfoDTO>> getOrders() {
+        return ResponseEntity.ok(orderService.getAllOrders());
+    }
 }

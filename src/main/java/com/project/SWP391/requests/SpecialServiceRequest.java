@@ -16,7 +16,7 @@ import java.util.List;
 public class SpecialServiceRequest {
 
 
-    private Long storeId;
+
 
     private String name;
     private String description;
@@ -24,9 +24,11 @@ public class SpecialServiceRequest {
     private String imageBanner;
     private List<Long> materials;
 
-    private LaundryDetailInfoDTO details;
+    private float price;
 
-    private Long clothId;
+    private String unit;
+
+    private Long cloth;
 
     private int isDeleted;
 

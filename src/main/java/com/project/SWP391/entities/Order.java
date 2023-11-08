@@ -1,8 +1,7 @@
 package com.project.SWP391.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Nationalized;
 
@@ -12,8 +11,10 @@ import java.util.Set;
 
 @Getter
 @Setter
-
+@Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "orders")
 public class Order implements Serializable {
     @Id
@@ -24,7 +25,7 @@ public class Order implements Serializable {
     private String orderCode;
     @CreationTimestamp
     @Column(name = "order_date")
-    private Date orderDate;
+    private String orderDate;
     @Column(name = "note_text")
     @Nationalized
     private String noteText;
@@ -47,7 +48,7 @@ public class Order implements Serializable {
     private Store store;
 
     @ManyToOne
-    @JoinColumn (name = "time_id", nullable = false)
+    @JoinColumn (name = "time_id", nullable = true)
     private Time time;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
     private Set<Item> items;

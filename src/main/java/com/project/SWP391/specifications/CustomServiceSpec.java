@@ -40,7 +40,7 @@ public class CustomServiceSpec extends SearchSpecification<SpecialServiceFilterR
                 predicates.add(eqMaterials);
         }
 
-        if (search.getClothId() != null) {
+        if (search.getClothId() != null ) {
 
                 Predicate eqCloth = criteriaBuilder.equal(cloth.get("id"), search.getClothId());
                 predicates.add(eqCloth);

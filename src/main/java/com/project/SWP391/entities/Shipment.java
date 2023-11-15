@@ -19,9 +19,9 @@ public class Shipment implements Serializable {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @CreationTimestamp
+
     @Column(name = "pick_up")
-    private Date pickUptime;
+    private Long pickUptime;
 
     @ManyToOne
     @JoinColumn (name = "staff_id", nullable = false)

@@ -96,7 +96,7 @@ public class AdminController {
     @Hidden
     public ResponseEntity<MaterialDTO> deleteMaterial(@PathVariable Long id) {
         materialService.deleteMaterial(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
 

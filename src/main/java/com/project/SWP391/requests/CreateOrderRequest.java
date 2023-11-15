@@ -22,8 +22,8 @@ public class CreateOrderRequest {
 
    // private Long userId ;
 
-   @JsonFormat(pattern = "yyyy-MM-dd@HH:mm:ss")
-    private String createDate;
+
+    private Long createDate;
 
 
 

@@ -23,9 +23,9 @@ public class Order implements Serializable {
     private Long id;
     @Column(name = "order_code")
     private String orderCode;
-    @CreationTimestamp
+
     @Column(name = "order_date")
-    private String orderDate;
+    private Long orderDate;
     @Column(name = "note_text")
     @Nationalized
     private String noteText;

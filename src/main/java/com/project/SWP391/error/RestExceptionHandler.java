@@ -1,6 +1,7 @@
 package com.project.SWP391.error;
 
 import com.project.SWP391.responses.ErrorResponse;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.DuplicateFormatFlagsException;
 import java.util.NoSuchElementException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -41,7 +43,20 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgumentException(HttpServletRequest req,IllegalArgumentException ex){
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND);
+        response.setMessage("data not existent: " + req.getRequestURI());   
+        return buildResponseEntity(response);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<Object> handleExpiredJwtException(HttpServletRequest req,ExpiredJwtException ex){
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST);
         response.setMessage("data not existent: " + req.getRequestURI());
+        return buildResponseEntity(response);
+    }
+    @ExceptionHandler(DuplicateFormatFlagsException.class)
+    public ResponseEntity<Object> handleDuplicatedException(HttpServletRequest req,DuplicateFormatFlagsException ex){
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST);
+        response.setMessage("Data is duplicated " + req.getRequestURI());
         return buildResponseEntity(response);
     }
     private ResponseEntity<Object> buildResponseEntity(ErrorResponse errorResponse){

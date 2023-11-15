@@ -20,6 +20,8 @@ import java.util.List;
 public class BaseController {
 
     private final StoreService storeService ;
+
+    private final UserService userService;
     private final LaundryServiceImp laundryServiceImp;
 
     private final MaterialService materialService;
@@ -59,6 +61,12 @@ public class BaseController {
         return ResponseEntity.ok(laundryServiceImp.getServiceCustomer(id));
     }
 
+    @GetMapping("/standard-service/prices")
+    //@PreAuthorize("hasAuthority('store:read')")
+    public ResponseEntity<List<LaundryDetailInfoDTO>> getPricesStandardService(@RequestParam(name = "store") long id) {
+        return ResponseEntity.ok(laundryServiceImp.getPricesOfStandardService(id));
+    }
+
     @GetMapping("/store/all")
     public ResponseEntity<List<StoreInfoDTO>> getAllStores(){
         return ResponseEntity.ok(storeService.getAllStore());
@@ -83,9 +91,41 @@ public class BaseController {
     public ResponseEntity<OrderInfoDTO > createOrder(@RequestBody CreateOrderRequest request){
         return ResponseEntity.ok(orderService.  createOrder(request));
     }
-
-    @GetMapping("/order/all")
-    public ResponseEntity<List<OrderInfoDTO>> getOrders() {
-        return ResponseEntity.ok(orderService.getAllOrders());
+    @GetMapping("/order/{id}")
+    public ResponseEntity<OrderInfoDTO > createOrder(@PathVariable(name = "id") long id){
+        return ResponseEntity.ok(orderService.getAnOder(id));
     }
+    @GetMapping("/order/all/{id}")
+    public ResponseEntity<List<OrderInfoDTO>> getOrders(@PathVariable("id") long id) {
+        return ResponseEntity.ok(orderService.   getAllOrders(id));
+    }
+
+    @GetMapping("/profile/{id}")
+    public ResponseEntity<UserInfoDTO> getProfile(@PathVariable(name = "id") long id) {
+        return ResponseEntity.ok(userService.getCurrentUser(id));
+    }
+
+    @PutMapping("/order/update/{id}")
+    //@PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<OrderInfoDTO> updateAnOrder(@PathVariable("id") Long id, @RequestParam(name = "status") int request){
+        return ResponseEntity.ok(orderService.updateAnOrder(id, request));
+    }
+
+
+    @PutMapping("/order/item/update/{id}")
+    //@PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<ItemInfoDTO> updateItem(@PathVariable("id") Long id, @RequestParam("weight") Float weight){
+        return ResponseEntity.ok(orderService.updateItemOfAnOrder(id,weight));
+    }
+
+    @GetMapping("/staff/accepted-order")
+    public ResponseEntity<List<OrderInfoDTO>> getOrderByStaff() {
+        return ResponseEntity.ok(orderService.getAllAcceptedOrdersByStaff());
+    }
+
+    @GetMapping("/staff/shipping-order")
+    public ResponseEntity<List<OrderInfoDTO>> getDeliveryOrderByStaff() {
+        return ResponseEntity.ok(orderService.getAllDeliveryOrdersByStaff());
+    }
+
 }

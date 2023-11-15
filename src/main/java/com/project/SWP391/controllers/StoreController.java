@@ -39,11 +39,11 @@ public class StoreController {
 
     private  final OrderService orderService;
 
-    @GetMapping("/profile")
-    @PreAuthorize("hasAuthority('store:read')")
-    public ResponseEntity<UserInfoDTO> getProfile() {
-        return ResponseEntity.ok(userService.getCurrentUser());
-    }
+//    @GetMapping("/profile")
+//    @PreAuthorize("hasAuthority('store:read')")
+//    public ResponseEntity<UserInfoDTO> getProfile() {
+//        return ResponseEntity.ok(userService.getCurrentUser());
+//    }
 
     @PutMapping("/profile/update/{id}")
     @PreAuthorize("hasAuthority('store:update')")
@@ -170,7 +170,7 @@ public class StoreController {
 
     @PutMapping("/order/update/{id}")
     @PreAuthorize("hasAuthority('store:update')")
-    public ResponseEntity<OrderInfoDTO> updateAnOrder(@PathVariable("id") Long id, @RequestBody OrderUpdateRequest request){
+    public ResponseEntity<OrderInfoDTO> updateAnOrder(@PathVariable("id") Long id, @RequestParam("status") int request){
         return ResponseEntity.ok(orderService.updateAnOrder(id, request));
     }
 
@@ -178,6 +178,12 @@ public class StoreController {
     @PreAuthorize("hasAuthority('store:update')")
     public ResponseEntity<OrderInfoDTO> getAnOrder(@PathVariable("id") Long id){
         return ResponseEntity.ok(orderService.getAnOder(id));
+    }
+
+    @GetMapping("/order/all/{id}")
+    @PreAuthorize("hasAuthority('store:read')")
+    public ResponseEntity<List<OrderInfoDTO>> getAllOrder(@PathVariable(name="id") long id){
+        return ResponseEntity.ok(orderService.getAllOrdersByStore(id));
     }
 
 

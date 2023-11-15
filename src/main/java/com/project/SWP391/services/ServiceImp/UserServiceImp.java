@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImp implements UserService {
+public class    UserServiceImp implements UserService {
 
 
     private final UserRepository userRepository;
@@ -69,8 +69,8 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public UserInfoDTO getCurrentUser() {
-        var user = userRepository.findById(SecurityUtils.getPrincipal().getId()).orElseThrow();
+    public UserInfoDTO getCurrentUser(Long id) {
+        var user = userRepository.findById(id).orElseThrow();
         return mapToDTO(user);
     }
 

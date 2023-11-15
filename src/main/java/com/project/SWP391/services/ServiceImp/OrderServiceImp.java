@@ -3,6 +3,7 @@ package com.project.SWP391.services.ServiceImp;
 import com.project.SWP391.entities.Item;
 import com.project.SWP391.entities.LaundryDetail;
 import com.project.SWP391.entities.Order;
+import com.project.SWP391.entities.Store;
 import com.project.SWP391.repositories.*;
 import com.project.SWP391.requests.CreateOrderRequest;
 import com.project.SWP391.requests.OrderUpdateRequest;
@@ -16,10 +17,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,25 +77,53 @@ public class OrderServiceImp implements OrderService {
     }
 
     @Override
-    public List<OrderInfoDTO> getAllOrders() {
-        var orders = orderRepository.findAllByUserId(22L);
+    public List<OrderInfoDTO> getAllOrders(Long id) {
+        var orders = orderRepository.findAllByUserId(id);
 
         return orders.stream().map(order -> mapToDTO(order)).collect(Collectors.toList());
     }
 
     @Override
-    public List<OrderInfoDTO> getAllOrdersByStore() {
+    public List<OrderInfoDTO> getAllOrdersByStore(Long id) {
 
-        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
+        var store = storeRepository.findStoreByUserId(id);
         var orders = orderRepository.findAllByStoreId(store.getId());
-        return orders.stream().map(order -> mapToDTO(order)).collect(Collectors.toList());
+
+        List<OrderInfoDTO> list = orders.stream().map(order -> mapToDTO(order)).collect(Collectors.toList());
+
+
+        return list.stream().peek(orderInfoDTO -> orderInfoDTO.setOrderDate(convertDate(Long.parseLong(orderInfoDTO.getOrderDate())))).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderInfoDTO> getAllAcceptedOrdersByStaff() {
+
+        var orders = orderRepository.findAll();
+        Predicate<Order> byProcessing = order -> order.getStatus() == 2;
+        List<OrderInfoDTO> list = orders.stream().filter(byProcessing).map(order -> mapToDTO(order)).collect(Collectors.toList());
+
+
+
+        return list.stream().peek(orderInfoDTO -> orderInfoDTO.setOrderDate(convertDate(Long.parseLong(orderInfoDTO.getOrderDate())))).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderInfoDTO> getAllDeliveryOrdersByStaff() {
+
+        var orders = orderRepository.findAll();
+        Predicate<Order> byProcessing = order -> order.getStatus() == 5;
+        List<OrderInfoDTO> list = orders.stream().filter(byProcessing).map(order -> mapToDTO(order)).collect(Collectors.toList());
+
+
+
+        return list.stream().peek(orderInfoDTO -> orderInfoDTO.setOrderDate(convertDate(Long.parseLong(orderInfoDTO.getOrderDate())))).collect(Collectors.toList());
     }
 
     @Override
     public OrderInfoDTO getAnOder(Long id) {
         var order = orderRepository.findById(id).orElseThrow();
         order.setTotal(0F);
-        float total = 0;
+        float total = 0F;
         var items = itemRepository.findAllByOrderId(id);
         for (Item item: items
         ) {
@@ -98,29 +131,34 @@ public class OrderServiceImp implements OrderService {
 
         }
         order.setTotal(total);
-        return mapToDTO(order);
+        orderRepository.save(order);
+        OrderInfoDTO dto = mapToDTO(order);
+        DateFormat obj = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        // we create instance of the Date and pass milliseconds to the constructor
+        Date res = new Date(order.getOrderDate());
+        dto.setOrderDate(obj.format(res));
+        return dto;
     }
 
     @Override
     public void cancelAnOrder(Long id) {
-
+        var order = orderRepository.findById(id).orElseThrow();
+        order.setStatus(0);
+        orderRepository.save(order);
     }
 
     @Override
-    public OrderInfoDTO updateAnOrder(Long id, OrderUpdateRequest request) {
-        var order = orderRepository.findById(22L).orElseThrow();
-        order.setStatus(request.getStatus());
-        var items = itemRepository.findAllByOrderId(id);
-        order.setTotal(0F);
-        float total = 0;
-        for (Item item: items
-             ) {
-            total += item.getTotal();
+    public OrderInfoDTO updateAnOrder(Long id, int request) {
+        var order = orderRepository.findById(id).orElseThrow();
+        order.setStatus(request);
 
-        }
-        order.setTotal(total);
         var  update = orderRepository.save(order);
-        return mapToDTO(update);
+        OrderInfoDTO dto = mapToDTO(update);
+        DateFormat obj = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        // we create instance of the Date and pass milliseconds to the constructor
+        Date res = new Date(update.getOrderDate());
+        dto.setOrderDate(obj.format(res));
+        return dto;
     }
 
     @Override
@@ -141,5 +179,12 @@ public class OrderServiceImp implements OrderService {
 
     private OrderInfoDTO mapToDTO(Order dto){
         return mapper.map(dto, OrderInfoDTO.class);
+    }
+
+    private String convertDate (Long date){
+        DateFormat obj = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        // we create instance of the Date and pass milliseconds to the constructor
+        Date res = new Date(date);
+        return  obj.format(res);
     }
 }

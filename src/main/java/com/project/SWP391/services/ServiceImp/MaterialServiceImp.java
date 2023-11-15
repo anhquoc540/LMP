@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.DuplicateFormatFlagsException;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -25,12 +26,31 @@ public class MaterialServiceImp implements MaterialService {
 
     @Override
     public MaterialDTO createNewMaterial(MaterialDTO request) {
-        return null;
+        var material = materialRepository.findByName(request.getName());
+        if(material != null){
+            material.setName(request.getName());
+            materialRepository.save(material);
+
+            return mapToDTO(material);
+        }
+        var newMaterial = Material.builder().status(1)
+                .name(request.getName()).build();
+        materialRepository.save(newMaterial);
+        return  mapToDTO(newMaterial);
+
     }
 
     @Override
     public MaterialDTO updateMaterial(String name, Long id) {
-        return null;
+        var material = materialRepository.findByName(name);
+        if(material == null){
+            var updateMaterial = materialRepository.findById(id).orElseThrow();
+            updateMaterial.setName(name);
+            materialRepository.save(updateMaterial);
+
+            return mapToDTO(updateMaterial);
+        }
+        throw new DuplicateFormatFlagsException("Name of material is existed");
     }
 
 
@@ -43,8 +63,11 @@ public class MaterialServiceImp implements MaterialService {
     }
 
     @Override
-    public Long deleteMaterial(Long id) {
-        return null;
+    public void deleteMaterial(Long id) {
+        var updateMaterial = materialRepository.findById(id).orElseThrow();
+        updateMaterial.setStatus(0);
+        materialRepository.save(updateMaterial);
+
     }
 
     private MaterialDTO mapToDTO(Material dto) {

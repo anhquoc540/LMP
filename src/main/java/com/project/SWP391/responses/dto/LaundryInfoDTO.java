@@ -22,7 +22,7 @@ public class LaundryInfoDTO {
 
     private List<LaundryDetailInfoDTO> details;
 
-    private Long price;
+    private Float price;
 
     private List<MaterialDTO> materials;
     private ClothDTO cloth;

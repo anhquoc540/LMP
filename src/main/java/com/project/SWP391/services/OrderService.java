@@ -9,15 +9,17 @@ import java.util.List;
 
 public interface OrderService {
     OrderInfoDTO createOrder(CreateOrderRequest request);
-    List<OrderInfoDTO> getAllOrders();
-    List<OrderInfoDTO> getAllOrdersByStore();
+    List<OrderInfoDTO> getAllOrders(Long id);
+    List<OrderInfoDTO> getAllOrdersByStore(Long id);
 
+    List<OrderInfoDTO> getAllAcceptedOrdersByStaff();
 
+    List<OrderInfoDTO> getAllDeliveryOrdersByStaff();
     OrderInfoDTO getAnOder(Long id);
 
     void cancelAnOrder(Long id);
 
-    OrderInfoDTO updateAnOrder (Long id , OrderUpdateRequest orderUpdateRequest);
+    OrderInfoDTO updateAnOrder (Long id ,int request);
 
     ItemInfoDTO updateItemOfAnOrder(Long id, Float weight);
 

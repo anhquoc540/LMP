@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface MaterialRepository extends JpaRepository<Material, Long> {
 
-
+   Material findByName(String name);
 
 
 }

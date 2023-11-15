@@ -22,14 +22,13 @@ public class OrderInfoDTO {
 
     @JsonFormat(pattern = "yyyy-MM-dd@HH:mm:ss")
     private String orderDate;
-
       private StoreInfoDTO store;
 
-
+    private UserInfoDTO user;
 
     private String noteText;
 
-    private float total;
+    private Float total;
 
     private int status;
 

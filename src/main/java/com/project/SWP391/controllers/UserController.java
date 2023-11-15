@@ -7,6 +7,7 @@ import com.project.SWP391.responses.dto.UserInfoDTO;
 import com.project.SWP391.services.OrderService;
 import com.project.SWP391.services.StoreService;
 import com.project.SWP391.services.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,16 +21,17 @@ import java.util.List;
 @PreAuthorize("hasRole('USER')")
 @CrossOrigin
 @RequiredArgsConstructor
+@Tag(name = "User", description = "User management APIs")
 public class UserController
 {
     private final UserService service ;
 
     private final OrderService orderService;
 
-    @GetMapping("/profile")
-    public ResponseEntity<UserInfoDTO> getProfile() {
-        return ResponseEntity.ok(service.getCurrentUser());
-    }
+//    @GetMapping("/profile")
+//    public ResponseEntity<UserInfoDTO> getProfile() {
+//        return ResponseEntity.ok(service.getCurrentUser());
+//    }
 
     @GetMapping("/profile/update/{id}")
     public ResponseEntity<UserInfoDTO> updateProfile(@PathVariable Long id , @RequestBody UserInfoDTO request) {
@@ -37,10 +39,17 @@ public class UserController
     }
 
 
-//    @GetMapping("/order/all")
-//    public ResponseEntity<List<OrderInfoDTO>> getOrders() {
-//        return ResponseEntity.ok(orderService.getAllOrders());
-//    }
+    @GetMapping("/order/all/{id}")
+    public ResponseEntity<List<OrderInfoDTO>> getOrders(@PathVariable("id") long id) {
+        return ResponseEntity.ok(orderService.getAllOrders(id));
+    }
 
+
+    @DeleteMapping("/order/cancel/{id}")
+
+    public ResponseEntity cancelAnOrder(@PathVariable("id") long id){
+        orderService.cancelAnOrder(id);
+        return  ResponseEntity.ok().build();
+    }
 
 }

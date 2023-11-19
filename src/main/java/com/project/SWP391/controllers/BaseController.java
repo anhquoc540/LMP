@@ -87,29 +87,12 @@ public class BaseController {
         return ResponseEntity.ok(clothService.getAllCloth());
     }
 
-    @PostMapping("/order/create")
-    public ResponseEntity<OrderInfoDTO > createOrder(@RequestBody CreateOrderRequest request){
-        return ResponseEntity.ok(orderService.  createOrder(request));
-    }
-    @GetMapping("/order/{id}")
-    public ResponseEntity<OrderInfoDTO > createOrder(@PathVariable(name = "id") long id){
-        return ResponseEntity.ok(orderService.getAnOder(id));
-    }
-    @GetMapping("/order/all/{id}")
-    public ResponseEntity<List<OrderInfoDTO>> getOrders(@PathVariable("id") long id) {
-        return ResponseEntity.ok(orderService.   getAllOrders(id));
-    }
-
     @GetMapping("/profile/{id}")
     public ResponseEntity<UserInfoDTO> getProfile(@PathVariable(name = "id") long id) {
         return ResponseEntity.ok(userService.getCurrentUser(id));
     }
 
-    @PutMapping("/order/update/{id}")
-    //@PreAuthorize("hasAuthority('store:update')")
-    public ResponseEntity<OrderInfoDTO> updateAnOrder(@PathVariable("id") Long id, @RequestParam(name = "status") int request){
-        return ResponseEntity.ok(orderService.updateAnOrder(id, request));
-    }
+
 
 
     @PutMapping("/order/item/update/{id}")

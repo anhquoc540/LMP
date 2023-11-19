@@ -2,6 +2,9 @@ package com.project.SWP391.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+//import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+//import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.project.SWP391.entities.Role;
 import com.project.SWP391.entities.User;
 import com.project.SWP391.entities.Token;
 import com.project.SWP391.entities.TokenType;
@@ -10,12 +13,14 @@ import com.project.SWP391.repositories.TokenRepository;
 import com.project.SWP391.repositories.UserRepository;
 import com.project.SWP391.requests.AuthenticationRequest;
 import com.project.SWP391.requests.RegisterRequest;
+import com.project.SWP391.requests.dto.IdTokenRequestDto;
 import com.project.SWP391.responses.AuthenticationResponse;
 
 import com.project.SWP391.responses.dto.UserInfoDTO;
 import com.project.SWP391.security.jwt.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +32,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +45,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+//    private final GoogleIdTokenVerifier verifier;
     @Autowired
     private final ModelMapper mapper;
 
@@ -85,18 +92,22 @@ public class AuthenticationService {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
 
-        var jwtToken = jwtService.generateToken((UserDetails) user);
-        var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
+        if(user.getStatus() == 1){
+
+            var jwtToken = jwtService.generateToken((UserDetails) user);
+            var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
 
 
-        revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
-        return AuthenticationResponse.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken)
-                .userInfoDTO(mapper.map(user, UserInfoDTO.class))
-                .build();
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+            return AuthenticationResponse.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .userInfoDTO(mapper.map(user, UserInfoDTO.class))
+                    .build();
+        }
 
+        return null ;
 
     }
 
@@ -110,7 +121,7 @@ public class AuthenticationService {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
 
-        if(user.getRole().equals("USER")){
+        if(user.getRole().equals("USER") && user.getStatus() == 1 ){
             var jwtToken = jwtService.generateToken((UserDetails) user);
             var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
 
@@ -130,7 +141,7 @@ public class AuthenticationService {
 
     }
 
-    private void saveUserToken(User user, String jwtToken) {
+    public void saveUserToken(User user, String jwtToken) {
 //       Token existedToken = tokenRepository.findByUserId(user.getId());
 //        if (existedToken != null){
 //            tokenRepository.delete(existedToken);
@@ -147,7 +158,7 @@ public class AuthenticationService {
 
 
 
-    private void revokeAllUserTokens(User user) {
+    public void revokeAllUserTokens(User user) {
         var validUserTokens = tokenRepository.findAllValidTokenByUser(Math.toIntExact(user.getId()));
         if (validUserTokens.isEmpty())
             return;
@@ -185,5 +196,9 @@ public class AuthenticationService {
             }
         }
     }
+
+
+
+
 
 }

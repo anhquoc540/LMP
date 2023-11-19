@@ -11,6 +11,7 @@ import com.project.SWP391.services.ClothService;
 import com.project.SWP391.services.MaterialService;
 import com.project.SWP391.services.UserService;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import java.util.List;
 @CrossOrigin
 @PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
+@Tag(name = "Admin", description = "Admin management APIs")
 public class AdminController {
 
     @Autowired
@@ -35,10 +37,10 @@ public class AdminController {
 
 
 
-    @GetMapping("/user/all")
+    @GetMapping("/user/all/{id}")
     @PreAuthorize("hasAuthority('admin:read')")
-    public ResponseEntity<List<UserInfoDTO>> getAllUsers() {
-        return ResponseEntity.ok(service.getAllUsers());
+    public ResponseEntity<List<UserInfoDTO>> getAllUsers(@PathVariable (name= "id") Long id) {
+        return ResponseEntity.ok(service.getAllUsers(id));
     }
 
     @GetMapping("/user/{id}")

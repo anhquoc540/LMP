@@ -40,12 +40,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(response);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Object> handleIllegalArgumentException(HttpServletRequest req,IllegalArgumentException ex){
-        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND);
-        response.setMessage("data not existent: " + req.getRequestURI());   
-        return buildResponseEntity(response);
-    }
+//    @ExceptionHandler(IllegalArgumentException.class)
+//    public ResponseEntity<Object> handleIllegalArgumentException(HttpServletRequest req,IllegalArgumentException ex){
+//        ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND);
+//        response.setMessage("data not existent: " + req.getRequestURI());
+//        return buildResponseEntity(response);
+//    }
 
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<Object> handleExpiredJwtException(HttpServletRequest req,ExpiredJwtException ex){

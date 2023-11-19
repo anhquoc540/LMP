@@ -132,6 +132,11 @@ public class LaundryServiceImp{
 
     public LaundryInfoDTO updateSpecialService(SpecialServiceRequest request, long id) {
         var editSpecialService = serviceRepository.findById(id).orElseThrow();
+        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
+        if(editSpecialService.getStore().getId() != store.getId() ){
+            throw new RuntimeException("Request is denied");
+        }
+
         var cloth = clotheRepository.findById(request.getCloth()).orElseThrow();
         var material = materialRepository.findAllById(request.getMaterials()).stream().collect(Collectors.toList());
 
@@ -155,6 +160,10 @@ public class LaundryServiceImp{
 
     public void deleteService(long id) {
         var editSpecialService = serviceRepository.findById(id).orElseThrow();
+        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
+        if(editSpecialService.getStore().getId() != store.getId() ){
+            throw new RuntimeException("Request is denied");
+        }
 
         editSpecialService.setIsDeleted(1);
 
@@ -207,7 +216,7 @@ public class LaundryServiceImp{
     }
 
     public List<LaundryDetailInfoDTO> getPricesOfStandardService(long id){
-        var store = storeRepository.findStoreByUserId(id);
+        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
         var laundry = serviceRepository.findByStoreIdAndIsStandardTrue(store.getId());
         List<LaundryDetail> price = laundryDetailRepository.findAllByLaundryServiceId(laundry.getId());
         return price.stream().map( laundryDetail ->mapper.map(laundryDetail, LaundryDetailInfoDTO.class)).collect(Collectors.toList());

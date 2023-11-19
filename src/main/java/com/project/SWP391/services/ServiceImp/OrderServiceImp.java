@@ -1,9 +1,6 @@
 package com.project.SWP391.services.ServiceImp;
 
-import com.project.SWP391.entities.Item;
-import com.project.SWP391.entities.LaundryDetail;
-import com.project.SWP391.entities.Order;
-import com.project.SWP391.entities.Store;
+import com.project.SWP391.entities.*;
 import com.project.SWP391.repositories.*;
 import com.project.SWP391.requests.CreateOrderRequest;
 import com.project.SWP391.requests.OrderUpdateRequest;
@@ -52,9 +49,10 @@ public class OrderServiceImp implements OrderService {
     private UserRepository userRepository;
     @Override
     public OrderInfoDTO createOrder(CreateOrderRequest request) {
+        var id = SecurityUtils.getPrincipal().getId();
         OffsetDateTime odt = OffsetDateTime.now() ;
         DateTimeFormatter f = DateTimeFormatter.ofPattern( "uuuuMMddHHmmssSSSD" ) ;
-        var user = userRepository.findById(22L).orElseThrow();
+        var user = userRepository.findById(id).orElseThrow();
         var store = storeRepository.findById(request.getStoreId()).orElseThrow();
         var order = Order.builder().orderDate(request.getCreateDate())
                 .status(1)
@@ -80,7 +78,10 @@ public class OrderServiceImp implements OrderService {
     public List<OrderInfoDTO> getAllOrders(Long id) {
         var orders = orderRepository.findAllByUserId(id);
 
-        return orders.stream().map(order -> mapToDTO(order)).collect(Collectors.toList());
+        List<OrderInfoDTO> list = orders.stream().map(order -> mapToDTO(order)).collect(Collectors.toList());
+
+
+        return list.stream().peek(orderInfoDTO -> orderInfoDTO.setOrderDate(convertDate(Long.parseLong(orderInfoDTO.getOrderDate())))).collect(Collectors.toList());
     }
 
     @Override
@@ -111,7 +112,7 @@ public class OrderServiceImp implements OrderService {
     public List<OrderInfoDTO> getAllDeliveryOrdersByStaff() {
 
         var orders = orderRepository.findAll();
-        Predicate<Order> byProcessing = order -> order.getStatus() == 5;
+        Predicate<Order> byProcessing = order -> order.getStatus() > 2;
         List<OrderInfoDTO> list = orders.stream().filter(byProcessing).map(order -> mapToDTO(order)).collect(Collectors.toList());
 
 
@@ -121,7 +122,22 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public OrderInfoDTO getAnOder(Long id) {
+
+        var user = SecurityUtils.getPrincipal();
         var order = orderRepository.findById(id).orElseThrow();
+        if(user.getRole().equals(Role.USER)){
+            if (order.getUser().getId() != user.getId()){
+                throw new IllegalArgumentException();
+            }
+        }
+
+        if(user.getRole().equals(Role.STORE)){
+            var store = storeRepository.findStoreByUserId(user.getId());
+            if(order.getStore().getId() != store.getId()){
+                throw new IllegalArgumentException();
+            }
+        }
+
         order.setTotal(0F);
         float total = 0F;
         var items = itemRepository.findAllByOrderId(id);
@@ -142,14 +158,40 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public void cancelAnOrder(Long id) {
+        var user = SecurityUtils.getPrincipal();
         var order = orderRepository.findById(id).orElseThrow();
+        if(user.getRole().equals(Role.USER)){
+            if (order.getUser().getId() != user.getId()){
+                throw new IllegalArgumentException();
+            }
+        }
+
+        if(user.getRole().equals(Role.STORE)){
+            var store = storeRepository.findStoreByUserId(user.getId());
+            if(order.getStore().getId() != store.getId()){
+                throw new IllegalArgumentException();
+            }
+        }
         order.setStatus(0);
         orderRepository.save(order);
     }
 
     @Override
     public OrderInfoDTO updateAnOrder(Long id, int request) {
+        var user = SecurityUtils.getPrincipal();
         var order = orderRepository.findById(id).orElseThrow();
+        if(user.getRole().equals(Role.USER)){
+            if (order.getUser().getId() != user.getId()){
+                throw new IllegalArgumentException();
+            }
+        }
+
+        if(user.getRole().equals(Role.STORE)){
+            var store = storeRepository.findStoreByUserId(user.getId());
+            if(order.getStore().getId() != store.getId()){
+                throw new IllegalArgumentException();
+            }
+        }
         order.setStatus(request);
 
         var  update = orderRepository.save(order);

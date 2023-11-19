@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserService {
 
-    List<UserInfoDTO> getAllUsers();
+    List<UserInfoDTO> getAllUsers(Long id);
     UserInfoDTO getUser(Long id);
 
     UserInfoDTO updateUserForAdmin(Long id, int status);

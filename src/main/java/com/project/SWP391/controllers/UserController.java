@@ -1,4 +1,5 @@
 package com.project.SWP391.controllers;
+import com.project.SWP391.requests.CreateOrderRequest;
 import com.project.SWP391.requests.SpecialServiceFilterRequest;
 import com.project.SWP391.requests.SpecialServiceRequest;
 import com.project.SWP391.responses.dto.OrderInfoDTO;
@@ -44,12 +45,28 @@ public class UserController
         return ResponseEntity.ok(orderService.getAllOrders(id));
     }
 
-
-    @DeleteMapping("/order/cancel/{id}")
-
-    public ResponseEntity cancelAnOrder(@PathVariable("id") long id){
-        orderService.cancelAnOrder(id);
-        return  ResponseEntity.ok().build();
+    @PostMapping("/order/create")
+    public ResponseEntity<OrderInfoDTO > createOrder(@RequestBody CreateOrderRequest request){
+        return ResponseEntity.ok(orderService.createOrder(request));
     }
 
+
+    @PutMapping("/order/update/{id}")
+    //@PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<OrderInfoDTO> updateAnOrder(@PathVariable("id") Long id, @RequestParam(name = "status") int request){
+        return ResponseEntity.ok(orderService.updateAnOrder(id, request));
+    }
+
+    @DeleteMapping("/order/cancel/{id}")
+    //@PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity updateAnOrder(@PathVariable("id") Long id ){
+        orderService.cancelAnOrder(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/order/{id}")
+    //@PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<OrderInfoDTO> getAnOrder(@PathVariable("id") Long id){
+        return ResponseEntity.ok(orderService.getAnOder(id));
+    }
 }

@@ -27,7 +27,7 @@ public class LaundryInfoDTO {
     private List<MaterialDTO> materials;
     private ClothDTO cloth;
 
-    private FeedbackDTO feedbacks;
+
 
     private Boolean isStandard ;
 

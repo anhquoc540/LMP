@@ -1,5 +1,6 @@
 package com.project.SWP391.responses.dto;
 
+import com.project.SWP391.entities.User;
 import com.project.SWP391.responses.SpecialServiceResponseInItem;
 import lombok.*;
 
@@ -17,6 +18,8 @@ public class StoreInfoDTO {
     private String address;
     private String district;
     private String phone;
+
+    private UserInfoDTO user;
 
 
 }

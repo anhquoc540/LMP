@@ -2,6 +2,7 @@ package com.project.SWP391.controllers;
 
 import com.project.SWP391.requests.CreateOrderRequest;
 import com.project.SWP391.requests.SpecialServiceFilterRequest;
+import com.project.SWP391.responses.DashboardResponse;
 import com.project.SWP391.responses.dto.*;
 import com.project.SWP391.services.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,6 +12,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -29,6 +33,13 @@ public class BaseController {
     private final ClothService clothService;
 
     private final OrderService orderService;
+
+    private final FeedbackService feedbackService;
+
+    private final StoreTimeService storeTimeService;
+
+    private final TimeCategoryService timeCategoryService;
+
 
     @PostMapping("/store/filter")
     public ResponseEntity<List<StoreInfoDTO>> getAllStoresByFilter(@RequestBody SpecialServiceFilterRequest request){
@@ -93,14 +104,6 @@ public class BaseController {
     }
 
 
-
-
-    @PutMapping("/order/item/update/{id}")
-    //@PreAuthorize("hasAuthority('store:update')")
-    public ResponseEntity<ItemInfoDTO> updateItem(@PathVariable("id") Long id, @RequestParam("weight") Float weight){
-        return ResponseEntity.ok(orderService.updateItemOfAnOrder(id,weight));
-    }
-
     @GetMapping("/staff/accepted-order")
     public ResponseEntity<List<OrderInfoDTO>> getOrderByStaff() {
         return ResponseEntity.ok(orderService.getAllAcceptedOrdersByStaff());
@@ -109,6 +112,43 @@ public class BaseController {
     @GetMapping("/staff/shipping-order")
     public ResponseEntity<List<OrderInfoDTO>> getDeliveryOrderByStaff() {
         return ResponseEntity.ok(orderService.getAllDeliveryOrdersByStaff());
+    }
+//    @PutMapping("/order/item/update/{id}")
+//    //@PreAuthorize("hasAuthority('store:update')")
+//    public ResponseEntity<ItemInfoDTO> updateItem(@PathVariable("id") Long id, @RequestParam("weight") Float weight){
+//        return ResponseEntity.ok(orderService.updateItemOfAnOrder(id,weight));
+//    }
+
+    @PutMapping("/order/update/{id}")
+    //@PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<OrderInfoDTO> updateAnOrder(@PathVariable(name = "id") Long id, @RequestParam(name = "status") int request){
+        return ResponseEntity.ok(orderService.updateAnOderForStaff(id, request));
+    }
+
+    @GetMapping("/order/{id}")
+   // @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<OrderInfoDTO> getAnOrder(@PathVariable("id") Long id){
+        return ResponseEntity.ok(orderService.getAnOderForStaff(id));
+    }
+
+    @GetMapping("laundry/feedback/{id}")
+    // @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<List<FeedbackDTO>> getAllFeedbackOfService(@PathVariable("id") Long id){
+        return ResponseEntity.ok(feedbackService.getAllFeedbackOfService(id));
+    }
+
+    @GetMapping("store-time/{id}")
+    // @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<List<StoreTimeDTO>> getAllStoreTimeOfService(@PathVariable("id") Long id){
+        return ResponseEntity.ok(storeTimeService.getAllStoreTimeForCustomer(id));
+    }
+
+    @GetMapping("time")
+    // @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<List<TimeDTO>> getAllTimeOfService(){
+        List<TimeDTO> list = timeCategoryService.getAll();
+        Predicate<TimeDTO> byStatus = timeDTO -> timeDTO.getStatus() == 1;
+        return ResponseEntity.ok(list.stream().filter(byStatus).collect(Collectors.toList()));
     }
 
 }

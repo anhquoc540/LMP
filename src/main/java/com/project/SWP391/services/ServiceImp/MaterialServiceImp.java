@@ -28,7 +28,8 @@ public class MaterialServiceImp implements MaterialService {
     public MaterialDTO createNewMaterial(MaterialDTO request) {
         var material = materialRepository.findByName(request.getName());
         if(material != null){
-            material.setName(request.getName());
+
+            material.setStatus(1);
             materialRepository.save(material);
 
             return mapToDTO(material);

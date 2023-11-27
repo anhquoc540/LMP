@@ -1,17 +1,17 @@
 package com.project.SWP391.responses.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MaterialDTO {
+@Getter
+@Setter
+public class TimeDTO {
     private Long id;
     private String name;
 
+    private int status;
 
 }

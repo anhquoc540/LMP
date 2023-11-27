@@ -33,6 +33,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(response);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> handleNoSuchElementException(HttpServletRequest req,RuntimeException ex){
+        ErrorResponse response = new ErrorResponse(HttpStatus.BAD_REQUEST);
+        response.setMessage("Invalid processing");
+        return buildResponseEntity(response);
+    }
+
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<Object> handleNullPointerException(HttpServletRequest req,NullPointerException ex){
         ErrorResponse response = new ErrorResponse(HttpStatus.NOT_FOUND);

@@ -1,29 +1,26 @@
 package com.project.SWP391.controllers;
 
 import com.project.SWP391.entities.LaundryDetail;
-import com.project.SWP391.requests.OrderUpdateRequest;
-import com.project.SWP391.requests.SpecialServiceRequest;
-import com.project.SWP391.requests.StandardServiceRequest;
-import com.project.SWP391.requests.StoreRegisterRequest;
+import com.project.SWP391.requests.*;
+import com.project.SWP391.responses.DashboardResponse;
 import com.project.SWP391.responses.SpecialServiceResponseInItem;
 import com.project.SWP391.responses.dto.*;
 
 
-import com.project.SWP391.services.LaundryServiceImp;
+import com.project.SWP391.services.*;
 
 
-import com.project.SWP391.services.OrderService;
-import com.project.SWP391.services.StoreService;
-import com.project.SWP391.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -38,9 +35,13 @@ public class StoreController {
     private final UserService userService;
 
     private  final OrderService orderService;
+    private final DashboardService dashboardService;
 
+    private final StoreTimeService storeTimeService;
+
+    private final CloudinaryService cloudinaryService;
 //    @GetMapping("/profile")
-//    @PreAuthorize("hasAuthority('store:read')")
+//  @PreAuthorize("hasAuthority('store:read')")
 //    public ResponseEntity<UserInfoDTO> getProfile() {
 //        return ResponseEntity.ok(userService.getCurrentUser());
 //    }
@@ -168,11 +169,7 @@ public class StoreController {
         return ResponseEntity.ok(storeService.updateStore(request));
     }
 
-    @PutMapping("/order/update/{id}")
-    @PreAuthorize("hasAuthority('store:update')")
-    public ResponseEntity<OrderInfoDTO> updateAnOrder(@PathVariable("id") Long id, @RequestParam("status") int request){
-        return ResponseEntity.ok(orderService.updateAnOrder(id, request));
-    }
+
 
     @GetMapping("/order/{id}")
     @PreAuthorize("hasAuthority('store:update')")
@@ -186,6 +183,13 @@ public class StoreController {
         return ResponseEntity.ok(orderService.getAllOrdersByStore(id));
     }
 
+    @GetMapping("/order/all/new")
+    @PreAuthorize("hasAuthority('store:read')")
+    public ResponseEntity<List<OrderInfoDTO>> getAllNewsOrder(){
+        return ResponseEntity.ok(orderService.getAllNewOrders());
+    }
+
+
 
     @PutMapping("/order/item/update/{id}")
     @PreAuthorize("hasAuthority('store:update')")
@@ -193,9 +197,73 @@ public class StoreController {
         return ResponseEntity.ok(orderService.updateItemOfAnOrder(id,weight));
     }
 
+    @PutMapping("/order/update/{id}")
+    @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<OrderInfoDTO> updateAnOrder(@PathVariable(name = "id") long id, @RequestParam(name = "status") int request){
+        return ResponseEntity.ok(orderService.updateAnOrder(id, request));
+    }
+    @GetMapping("dashboard/dow")
+    @PreAuthorize("hasAuthority('store:read')")
+    public ResponseEntity<List<Map.Entry<String, Float>>> getDashboardOfWeek(@RequestParam("target") Long date){
+        return ResponseEntity.ok(dashboardService.getRevenueOfWeekFromSpecificDate(date));
+    }
+
+    @GetMapping("dashboard/month")
+    @PreAuthorize("hasAuthority('store:read')")
+    public ResponseEntity<List<Map.Entry<String, Float>>> getDashboardOfMonth(@RequestParam("target") String month){
+        return ResponseEntity.ok(dashboardService.extractAndSummarizeMonthlyRevenue(month));
+    }
+
+    @GetMapping("dashboard/year")
+    @PreAuthorize("hasAuthority('store:read')")
+    public ResponseEntity<List<Map.Entry<String, Float>>> getDashboardOfYear(@RequestParam("target") String year){
+        return ResponseEntity.ok(dashboardService.extractAndSummarizeYearlyRevenue(year));
+    }
 
 
+    @GetMapping("dashboard")
+    @PreAuthorize("hasAuthority('store:read')")
+    public ResponseEntity<DashboardResponse> getDataOfMonth(){
+        return ResponseEntity.ok(dashboardService.getTotalOfAMonth());
+    }
 
+
+    @GetMapping("store-time")
+    @PreAuthorize("hasAuthority('store:read')")
+    public ResponseEntity<List<StoreTimeDTO>> getStoreTime(){
+        return ResponseEntity.ok(storeTimeService.getAllStoreTime());
+    }
+
+
+    @PostMapping("store-time/create")
+    @PreAuthorize("hasAuthority('store:create')")
+    public ResponseEntity<StoreTimeDTO> createStoreTime(@RequestBody StoreTimeRequest request){
+        return ResponseEntity.ok(storeTimeService.createStoreTime(request));
+    }
+
+    @PutMapping("store-time/update/{id}")
+    @PreAuthorize("hasAuthority('store:create')")
+    public ResponseEntity<StoreTimeDTO> updateStoreTime(@PathVariable(name="id") Long id, @RequestBody
+                                                        UpdateStoreTimeRequest request
+          ){
+        return ResponseEntity.ok(storeTimeService.updateStoreTime(id, request.getPrice(), request.getDateRange()));
+    }
+
+    @PutMapping("store-time/{id}")
+    @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity disableStoreTime(@PathVariable(name="id") Long id, @RequestParam int status) {
+        storeTimeService.setStatusOfStoreTime(id, status);
+        return ResponseEntity.ok().build();
+    }
+
+
+    @PostMapping("image/upload/{id}")
+    @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<String> uploadImage(@RequestParam(name = "file") MultipartFile file, @RequestParam(name = "id") long id){
+        String url = cloudinaryService.uploadFile(file,id);
+
+        return ResponseEntity.ok(url);
+    }
 
 
 }

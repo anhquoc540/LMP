@@ -1,4 +1,4 @@
-package com.project.SWP391.responses.dto;
+package com.project.SWP391.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MaterialDTO {
-    private Long id;
-    private String name;
+public class DashboardResponse {
+    private float avgOrder;
+    private float revenue;
+    private Long finishedOrder;
 
 
 }

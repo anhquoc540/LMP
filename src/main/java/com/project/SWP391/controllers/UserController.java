@@ -1,10 +1,13 @@
 package com.project.SWP391.controllers;
 import com.project.SWP391.requests.CreateOrderRequest;
+import com.project.SWP391.requests.FeedbackRequest;
 import com.project.SWP391.requests.SpecialServiceFilterRequest;
 import com.project.SWP391.requests.SpecialServiceRequest;
+import com.project.SWP391.responses.dto.FeedbackDTO;
 import com.project.SWP391.responses.dto.OrderInfoDTO;
 import com.project.SWP391.responses.dto.StoreInfoDTO;
 import com.project.SWP391.responses.dto.UserInfoDTO;
+import com.project.SWP391.services.FeedbackService;
 import com.project.SWP391.services.OrderService;
 import com.project.SWP391.services.StoreService;
 import com.project.SWP391.services.UserService;
@@ -26,7 +29,7 @@ import java.util.List;
 public class UserController
 {
     private final UserService service ;
-
+    private final FeedbackService feedbackService;
     private final OrderService orderService;
 
 //    @GetMapping("/profile")
@@ -34,7 +37,7 @@ public class UserController
 //        return ResponseEntity.ok(service.getCurrentUser());
 //    }
 
-    @GetMapping("/profile/update/{id}")
+    @PutMapping("/profile/update/{id}")
     public ResponseEntity<UserInfoDTO> updateProfile(@PathVariable Long id , @RequestBody UserInfoDTO request) {
         return ResponseEntity.ok(service.updateUser(id,request));
     }
@@ -52,13 +55,13 @@ public class UserController
 
 
     @PutMapping("/order/update/{id}")
-    //@PreAuthorize("hasAuthority('store:update')")
+
     public ResponseEntity<OrderInfoDTO> updateAnOrder(@PathVariable("id") Long id, @RequestParam(name = "status") int request){
         return ResponseEntity.ok(orderService.updateAnOrder(id, request));
     }
 
     @DeleteMapping("/order/cancel/{id}")
-    //@PreAuthorize("hasAuthority('store:update')")
+
     public ResponseEntity updateAnOrder(@PathVariable("id") Long id ){
         orderService.cancelAnOrder(id);
         return ResponseEntity.ok().build();
@@ -69,4 +72,28 @@ public class UserController
     public ResponseEntity<OrderInfoDTO> getAnOrder(@PathVariable("id") Long id){
         return ResponseEntity.ok(orderService.getAnOder(id));
     }
+
+
+    @GetMapping("feedback/all")
+    // @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<List<FeedbackDTO>> getAllFeedbackOfUser(){
+        return ResponseEntity.ok(feedbackService.getAllFeedbackOfUser());
+    }
+
+    @PostMapping("feedback/create")
+    // @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity<FeedbackDTO> createFeedbackOfUser(@RequestBody  FeedbackRequest request){
+        return ResponseEntity.ok(feedbackService.createFeedback(request));
+    }
+
+    @DeleteMapping("feedback/delete/{id}")
+    // @PreAuthorize("hasAuthority('store:update')")
+    public ResponseEntity getAllFeedbackOfUser(@PathVariable(name="id") Long id){
+
+        feedbackService.deleteFeedback(id);
+        return ResponseEntity.ok().build();
+    }
+
+
+
 }

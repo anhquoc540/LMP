@@ -30,6 +30,7 @@ public class ClothServiceImp implements ClothService {
 
         if (existedCloth != null){
            existedCloth.setName(request.getName());
+           existedCloth.setStatus(1);
            var newCloth = clotherepository.save(existedCloth);
            return  mapToDTO(newCloth);
         }

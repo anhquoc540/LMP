@@ -29,10 +29,10 @@ public class CustomServiceSpec extends SearchSpecification<SpecialServiceFilterR
         Join<Laundry, Cloth> cloth = root.join("cloth", JoinType.INNER);
         List<Predicate> predicates = new ArrayList<Predicate>();
 
-        if (StringUtils.isNotEmpty(search.getName())) {
-            Predicate likeName = criteriaBuilder.like(root.get("name"), "%" + search.getName() + "%" );
-            predicates.add(likeName);
-        }
+//        if (StringUtils.isNotEmpty(search.getDistrict())) {
+//            Predicate likeName = criteriaBuilder.like(root.get("district"), "%" + search.getDistrict() + "%" );
+//            predicates.add(likeName);
+//        }
 
         if (search.getMaterials() != null && !search.getMaterials().isEmpty()) {
 
@@ -40,7 +40,7 @@ public class CustomServiceSpec extends SearchSpecification<SpecialServiceFilterR
                 predicates.add(eqMaterials);
         }
 
-        if (search.getClothId() != null ) {
+        if (search.getClothId() != null) {
 
                 Predicate eqCloth = criteriaBuilder.equal(cloth.get("id"), search.getClothId());
                 predicates.add(eqCloth);

@@ -9,12 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FeedbackDTO {
-
+public class PaymentDTO {
     private Long id;
-    private UserInfoDTO user;
-    private String content;
-    private int star;
+    private String method;
 
-    private LaundryInfoDTO laundryService;
+    private String createDate;
 }

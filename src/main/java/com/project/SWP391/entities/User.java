@@ -68,8 +68,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private Set<Feedback> feedbacks;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Shipment> shipments;
+
 
     @Override
     public boolean isAccountNonExpired() {

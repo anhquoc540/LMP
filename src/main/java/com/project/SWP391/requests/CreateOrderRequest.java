@@ -21,7 +21,7 @@ public class CreateOrderRequest {
     private Long storeId;
 
    // private Long userId ;
-
+    private Long storeTimeId;
 
     private Long createDate;
 

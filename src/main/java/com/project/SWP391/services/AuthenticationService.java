@@ -54,6 +54,7 @@ public class AuthenticationService {
         if(!repository.existsByEmail(request.getEmail())){
             var newUser = User.builder()
                     .fullName(request.getFullName())
+                    .address(request.getAddress())
                     .email(request.getEmail())
                     .phone(request.getPhone())
                     .password(passwordEncoder.encode(request.getPassword()))
@@ -92,7 +93,7 @@ public class AuthenticationService {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
 
-        if(user.getStatus() == 1){
+        if(user.getRole().equals(Role.STORE) & user.getStatus() == 1){
 
             var jwtToken = jwtService.generateToken((UserDetails) user);
             var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
@@ -105,9 +106,9 @@ public class AuthenticationService {
                     .refreshToken(refreshToken)
                     .userInfoDTO(mapper.map(user, UserInfoDTO.class))
                     .build();
+        }else{
+            throw new NullPointerException();
         }
-
-        return null ;
 
     }
 
@@ -121,7 +122,7 @@ public class AuthenticationService {
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
 
-        if(user.getRole().equals("USER") && user.getStatus() == 1 ){
+        if(user.getRole().equals(Role.USER) && user.getStatus() == 1 ){
             var jwtToken = jwtService.generateToken((UserDetails) user);
             var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
 
@@ -134,8 +135,43 @@ public class AuthenticationService {
                     .userInfoDTO(mapper.map(user, UserInfoDTO.class))
                     .build();
 
+        }else{
+            throw new NullPointerException();
         }
-        return null;
+
+
+
+    }
+
+    public AuthenticationResponse authenticateForAdmin(AuthenticationRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+        var user = repository.findByEmail(request.getEmail())
+                .orElseThrow();
+
+        if(user.getRole().equals(Role.ADMIN) && user.getStatus() == 1 ){
+            var jwtToken = jwtService.generateToken((UserDetails) user);
+            var refreshToken = jwtService.generateRefreshToken((UserDetails) user);
+
+
+            revokeAllUserTokens(user);
+            saveUserToken(user, jwtToken);
+
+
+            return AuthenticationResponse.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .userInfoDTO(mapper.map(user, UserInfoDTO.class))
+                    .build();
+
+        }else{
+            throw new NullPointerException();
+        }
+
 
 
 

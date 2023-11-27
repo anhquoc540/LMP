@@ -1,5 +1,9 @@
 package com.project.SWP391.services.ServiceImp;
 
+import com.paypal.api.payments.Links;
+import com.paypal.api.payments.Payment;
+import com.paypal.api.payments.Transaction;
+import com.paypal.base.rest.PayPalRESTException;
 import com.project.SWP391.entities.*;
 import com.project.SWP391.repositories.*;
 import com.project.SWP391.requests.CreateOrderRequest;
@@ -9,9 +13,13 @@ import com.project.SWP391.responses.dto.LaundryDetailInfoDTO;
 import com.project.SWP391.responses.dto.OrderInfoDTO;
 import com.project.SWP391.security.utils.SecurityUtils;
 import com.project.SWP391.services.OrderService;
+import com.project.SWP391.services.PaypalService;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
@@ -24,32 +32,48 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static com.project.SWP391.contraints.Contraints.*;
+import static com.project.SWP391.contraints.Contraints.CANCEL_URL;
+
+
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImp implements OrderService {
 
-    @Autowired
-        private OrderRepository orderRepository;
 
-    @Autowired
-    private LaundryDetailRepository laundryDetailRepository;
+    private final OrderRepository orderRepository;
 
-    @Autowired
-    private LaundryServiceRepository serviceRepository;
+    private final PaypalService service;
 
-    @Autowired
-    private ModelMapper mapper;
-    @Autowired
-    private ItemRepository itemRepository;
 
-    @Autowired
-    private StoreRepository storeRepository;
+    private final LaundryDetailRepository laundryDetailRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+
+    private final LaundryServiceRepository serviceRepository;
+
+
+    private final ModelMapper mapper;
+
+    private final ItemRepository itemRepository;
+
+
+    private final StoreRepository storeRepository;
+
+
+    private final UserRepository userRepository;
+
+    private final PaymentRepository paymentRepository;
+
+    private final StoreTimeRepository storeTimeRepository;
     @Override
     public OrderInfoDTO createOrder(CreateOrderRequest request) {
         var id = SecurityUtils.getPrincipal().getId();
+        Time time = null;
+        if(request.getStoreTimeId() != null){
+            time = storeTimeRepository.findById(request.getStoreTimeId()).orElseThrow();
+        }
+
+
         OffsetDateTime odt = OffsetDateTime.now() ;
         DateTimeFormatter f = DateTimeFormatter.ofPattern( "uuuuMMddHHmmssSSSD" ) ;
         var user = userRepository.findById(id).orElseThrow();
@@ -58,6 +82,7 @@ public class OrderServiceImp implements OrderService {
                 .status(1)
                 .store(store).total(request.getTotal())
                 .orderCode("ORD"+odt.format(f))
+                .time(time)
                 .user(user)
                 .build();
         orderRepository.save(order);
@@ -94,6 +119,19 @@ public class OrderServiceImp implements OrderService {
 
 
         return list.stream().peek(orderInfoDTO -> orderInfoDTO.setOrderDate(convertDate(Long.parseLong(orderInfoDTO.getOrderDate())))).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrderInfoDTO> getAllNewOrders() {
+        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
+        var orders = orderRepository.findAllByStoreId(store.getId());
+        Predicate<Order> byNew = order ->  order.getStatus() == 1 ;
+        List<OrderInfoDTO> list = orders.stream().filter(byNew).map(order -> mapToDTO(order)).collect(Collectors.toList());
+
+
+        return list.stream()
+                .peek(orderInfoDTO -> orderInfoDTO
+                        .setOrderDate(convertDate(Long.parseLong(orderInfoDTO.getOrderDate())))).collect(Collectors.toList());
     }
 
     @Override
@@ -138,6 +176,37 @@ public class OrderServiceImp implements OrderService {
             }
         }
 
+
+        float total = 0F;
+        var items = itemRepository.findAllByOrderId(id);
+        for (Item item: items
+        ) {
+            total += item.getTotal();
+
+        }
+        if(order.getTime() != null){
+            order.setTotal(total + order.getTime().getPrice());
+        }else{
+            order.setTotal(total);
+        }
+
+
+        orderRepository.save(order);
+        OrderInfoDTO dto = mapToDTO(order);
+        DateFormat obj = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        // we create instance of the Date and pass milliseconds to the constructor
+        Date res = new Date(order.getOrderDate());
+        dto.setOrderDate(obj.format(res));
+
+        return dto;
+    }
+    @Override
+    public OrderInfoDTO getAnOderForStaff(Long id) {
+
+
+        var order = orderRepository.findById(id).orElseThrow();
+
+
         order.setTotal(0F);
         float total = 0F;
         var items = itemRepository.findAllByOrderId(id);
@@ -166,32 +235,23 @@ public class OrderServiceImp implements OrderService {
             }
         }
 
-        if(user.getRole().equals(Role.STORE)){
-            var store = storeRepository.findStoreByUserId(user.getId());
-            if(order.getStore().getId() != store.getId()){
-                throw new IllegalArgumentException();
-            }
-        }
+
         order.setStatus(0);
         orderRepository.save(order);
     }
 
     @Override
     public OrderInfoDTO updateAnOrder(Long id, int request) {
-        var user = SecurityUtils.getPrincipal();
-        var order = orderRepository.findById(id).orElseThrow();
-        if(user.getRole().equals(Role.USER)){
-            if (order.getUser().getId() != user.getId()){
-                throw new IllegalArgumentException();
-            }
-        }
+        var store = storeRepository.findStoreByUserId(SecurityUtils.getPrincipal().getId());
 
-        if(user.getRole().equals(Role.STORE)){
-            var store = storeRepository.findStoreByUserId(user.getId());
-            if(order.getStore().getId() != store.getId()){
+        var order = orderRepository.findById(id).orElseThrow();
+
+
+
+            if(store.getId() != order.getStore().getId() ){
                 throw new IllegalArgumentException();
             }
-        }
+
         order.setStatus(request);
 
         var  update = orderRepository.save(order);
@@ -202,6 +262,31 @@ public class OrderServiceImp implements OrderService {
         dto.setOrderDate(obj.format(res));
         return dto;
     }
+
+    @Override
+    public OrderInfoDTO updateAnOderForStaff(Long id, int request) {
+
+        var order = orderRepository.findById(id).orElseThrow();
+
+
+
+        order.setStatus(request);
+        if(request == 7){
+            order.setIsPaid(1);
+            var payment = com.project.SWP391.entities.Payment.builder().order(order).method("DELIVERY")
+                    .createDate(convertDate(System.currentTimeMillis())).build();
+
+            paymentRepository.save(payment);
+        }
+        var  update = orderRepository.save(order);
+        OrderInfoDTO dto = mapToDTO(update);
+        DateFormat obj = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        // we create instance of the Date and pass milliseconds to the constructor
+        Date res = new Date(update.getOrderDate());
+        dto.setOrderDate(obj.format(res));
+        return dto;
+    }
+
 
     @Override
     public ItemInfoDTO updateItemOfAnOrder(Long id, Float weight) {
@@ -217,6 +302,58 @@ public class OrderServiceImp implements OrderService {
         }
         var update = itemRepository.save(item);
         return mapper.map(update, ItemInfoDTO.class);
+    }
+
+    @Override
+    public String payAnOrder(Long id) {
+
+        try {
+            var order = orderRepository.findById(id).orElseThrow();
+            if(order.getIsPaid() == 0 && order.getStatus() >= 5){
+                double price = order.getTotal();
+                Payment payment = service.createPayment(price,
+                        "USD",METHOD,INTENT,
+                        order.getOrderCode(),
+                        CANCEL_URL+id,SUCCESS_URL+id);
+                for(Links link:payment.getLinks()) {
+                    if(link.getRel().equals("approval_url")) {
+                        return link.getHref();
+                    }
+                }
+            }else{
+                throw new RuntimeException("Order was paid");
+            }
+
+
+        } catch (PayPalRESTException e) {
+
+            e.printStackTrace();
+        }
+        return "localhost:3000/";
+
+    }
+
+    @Override
+    public OrderInfoDTO confirmSuccessPaypal(String payId, String payerId) {
+        try {
+            Payment payment = service.executePayment(payId, payerId);
+
+            if (payment.getState().equals("approved")) {
+                System.out.println(payment.toJSON());
+              Transaction transaction = payment.getTransactions().get(0);
+               var order = orderRepository.findByOrderCode(transaction.getDescription()).orElseThrow();
+               order.setIsPaid(1);
+               var paidOrder = orderRepository.save(order);
+                var payments = com.project.SWP391.entities.Payment.builder().order(order).method("PAYPAL="+payerId)
+                        .createDate(convertDate(System.currentTimeMillis())).build();
+
+                paymentRepository.save(payments);
+               return mapToDTO(paidOrder);
+            }
+        } catch (PayPalRESTException e) {
+            throw new IllegalArgumentException();
+        }
+        return null;
     }
 
     private OrderInfoDTO mapToDTO(Order dto){

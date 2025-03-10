@@ -10,4 +10,6 @@ import java.util.Set;
 public interface FeedbackRepository extends JpaRepository<Feedback,Long> {
 
     List<Feedback> findAllByUserId(Long id);
+
+    List<Feedback> findAllByLaundryServiceId(Long id);
 }

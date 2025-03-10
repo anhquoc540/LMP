@@ -2,6 +2,7 @@ package com.project.SWP391.controllers;
 
 import com.project.SWP391.requests.AuthenticationRequest;
 import com.project.SWP391.requests.RegisterRequest;
+import com.project.SWP391.requests.dto.IdTokenRequestDto;
 import com.project.SWP391.responses.AuthenticationResponse;
 import com.project.SWP391.security.LogoutService;
 import com.project.SWP391.services.AuthenticationService;
@@ -38,6 +39,20 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.authenticate(request));
     }
 
+    @PostMapping("/user/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticateCustomer(
+            @RequestBody AuthenticationRequest request
+    ) {
+        return ResponseEntity.ok(service.authenticateForCustomer(request));
+    }
+
+    @PostMapping("/admin/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticateAdmin(
+            @RequestBody AuthenticationRequest request
+    ) {
+        return ResponseEntity.ok(service.authenticateForAdmin(request));
+    }
+
     @PostMapping("/refresh-token")
     public void refreshToken(
             HttpServletRequest request,
@@ -46,7 +61,12 @@ public class AuthenticationController {
         service.refreshToken(request, response);
     }
 
-
+    @GetMapping("/check-email")
+    public  ResponseEntity<Boolean> checkEmail(
+            @RequestParam(name = "email") String request
+    ) throws Exception {
+       return ResponseEntity.ok(service.checkEmail(request));
+    }
 
 
 

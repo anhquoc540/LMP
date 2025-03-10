@@ -18,7 +18,7 @@ public class StandardServiceRequest {
     private Long id;
     private String name;
     private String description;
-    private List<LaundryDetailInfoDTO> details;
+
     private String imageBanner;
 
 

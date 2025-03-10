@@ -47,9 +47,12 @@ public class StoreServiceImp implements StoreService {
         var user = userRepository.findById(SecurityUtils.getPrincipal().getId()).orElseThrow();
         var store = Store.builder()
                 .address(request.getAddress())
+                .status(1)
+                .district(request.getDistrict())
                 .phone(request.getPhone())
                 .name(request.getName())
                 .user(user).build();
+        storeRepository.save(store);
         return mapToDTO(store);
     }
 
@@ -98,19 +101,27 @@ public class StoreServiceImp implements StoreService {
 
     @Override
     public List<StoreInfoDTO> getAllStoreByFilter(SpecialServiceFilterRequest request) {
-        CustomServiceSpec spec = new CustomServiceSpec(request);
-          var list = serviceRepository.findAll(spec);
-        List<Long> ids = new ArrayList<>();
-        for (Laundry item : list
-             ) {
 
-            ids.add(item.getId() );
+        List<Store> stores = new ArrayList<>();
+        if((request.getMaterials() != null && !request.getMaterials().isEmpty()) || request.getClothId() != null){
+            CustomServiceSpec spec = new CustomServiceSpec(request);
+            var list = serviceRepository.findAll(spec);
+            List<Long> ids = new ArrayList<>();
+            for (Laundry item : list
+            ) {
 
+                ids.add(item.getId() );
+
+            }
+
+            stores = storeRepository.findAllById(serviceRepository.findAllStoreByFilter(ids));
+
+        }else{
+            stores = storeRepository.findAll();
         }
 
-        var stores = storeRepository.findAllById(serviceRepository.findAllStoreByFilter(ids));
 
-        if(request.getDistrict() != null){
+        if(request.getDistrict() != null && !request.getDistrict().isBlank()){
             Predicate<Store> byDistrict = store -> store.getDistrict().equals(request.getDistrict());
             return stores.stream().filter(byDistrict).map(store -> mapToDTO(store)).collect(Collectors.toList());
         }

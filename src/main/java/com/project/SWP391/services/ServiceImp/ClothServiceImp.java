@@ -30,6 +30,7 @@ public class ClothServiceImp implements ClothService {
 
         if (existedCloth != null){
            existedCloth.setName(request.getName());
+           existedCloth.setStatus(1);
            var newCloth = clotherepository.save(existedCloth);
            return  mapToDTO(newCloth);
         }
@@ -54,7 +55,7 @@ public class ClothServiceImp implements ClothService {
 
     @Override
     public List<ClothDTO> getAllCloth() {
-        Predicate<Cloth> byDeleted = cloth -> cloth.getStatus() == 0;
+        Predicate<Cloth> byDeleted = cloth -> cloth.getStatus() == 1  ;
         List<Cloth> list = clotherepository.findAll();
         return  list.stream().filter(byDeleted).map(cloth -> mapToDTO(cloth)).collect(Collectors.toList());
     }
